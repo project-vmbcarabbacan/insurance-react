@@ -41,12 +41,9 @@ export const UpdatePasswordMember: React.FC<{
 
             const validationErrors = validateTeamPasswordForm(password);
             if (Object.keys(validationErrors).length > 0) {
-                console.log('error')
-                console.log({ validationErrors })
                 dispatch(setTeamFormErrors(validationErrors));
                 return;
             }
-            console.log('success')
             const result = await dispatch(UpdateTeamPassword(password));
 
             if (UpdateTeamPassword.fulfilled.match(result)) {
@@ -103,8 +100,6 @@ export const UpdatePasswordMember: React.FC<{
             // Restore original type
             passwordInput.type = originalType;
         };
-
-
 
         return (
             <MotionDialog

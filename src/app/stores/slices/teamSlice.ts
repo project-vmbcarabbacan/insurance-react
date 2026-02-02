@@ -3,18 +3,22 @@ import { API_URL } from '../../../infrastructure/api/Urls'
 import { container } from '../../../di/container'
 import { TeamUseCase } from '../../usecases/users/TeamUseCase.ts'
 import { TOKENS } from '../../../di/tokens.ts'
-import type { AddTeam, Team, TeamFilter, TeamPassword, TeamStatus } from '../../../core/interfaces/Team'
-import type { TeamResponse } from '../../../infrastructure/dtos/TeamResponse.ts'
+import type { AddTeam, AssignProduct, Team, TeamFilter, TeamPassword, TeamStatus } from '../../../core/interfaces/Team'
+import type { TeamAccessedResponse, TeamResponse } from '../../../infrastructure/dtos/TeamResponse.ts'
 import type { UpsertTeamUseCase } from '../../usecases/users/UpsertTeamUseCase.ts'
 import { AddTeamError } from '../../errors/AddTeamError.ts'
 import type { UpdateTeamStatusUseCase } from '../../usecases/users/UpdateTeamStatusUseCase.ts'
 import { TeamStatusError } from '../../errors/TeamStatusError.ts'
 import type { UpdateTeamPasswordUseCase } from '../../usecases/users/UpdateTeamPasswordUseCase.ts'
 import { TeamPasswordError } from '../../errors/TeamPasswordError.ts'
+import { TeamAccessedUseCase } from '../../usecases/users/TeamAccessedUseCase.ts'
+import type { UpsertTeamProductAccessedUseCase } from '../../usecases/users/UpsertTeamProductAccessedUseCase.ts'
+import { UpsertTeamAssignProductError } from '../../errors/UpsertTeamAssignProductError.ts'
 
 interface TeamFormState {
     data: AddTeam;
     password: TeamPassword;
+    insuranceProducts: AssignProduct
     errors: Partial<Record<keyof AddTeam, string>>;
     isLoading: boolean;
     serverError: string | null;
@@ -30,6 +34,8 @@ interface TeamState {
     form: TeamFormState
 }
 
+
+
 const emptyFormData: AddTeam = {
     name: '',
     email: '',
@@ -42,6 +48,17 @@ const emptyPassword: TeamPassword = {
     password: '',
 }
 
+const emptyProducts: AssignProduct = {
+    uuid: '',
+    accessed: {
+        vehicle: false,
+        health: false,
+        travel: false,
+        pet: false,
+        home: false
+    },
+};
+
 const initialState: TeamState = {
     status: 'idle',
     teams: [],
@@ -52,6 +69,7 @@ const initialState: TeamState = {
     form: {
         data: emptyFormData,
         password: emptyPassword,
+        insuranceProducts: emptyProducts,
         errors: {},
         isLoading: false,
         serverError: null,
@@ -66,6 +84,18 @@ export const TeamPagination = createAsyncThunk(
             const teamUseCase = container.resolve<TeamUseCase>(TOKENS.TeamUseCase)
             return await teamUseCase.execute(data)
         } catch (error: unknown) {
+            return rejectWithValue('Unexpected api error');
+        }
+    }
+)
+
+export const TeamAccessed = createAsyncThunk(
+    `${API_URL.user.accessed}-get`,
+    async (uuid: string, { rejectWithValue }) => {
+        try {
+            const accessed = container.resolve<TeamAccessedUseCase>(TOKENS.TeamAccessedUseCase)
+            return await accessed.execute(uuid);
+        } catch (error) {
             return rejectWithValue('Unexpected api error');
         }
     }
@@ -95,6 +125,22 @@ export const UpdateTeamStatus = createAsyncThunk(
             return await upsert.execute(data)
         } catch (error: unknown) {
             if (error instanceof TeamStatusError) {
+                return rejectWithValue(error.message || 'Something went wrong')
+            }
+
+            return rejectWithValue(error?.message);
+        }
+    }
+)
+
+export const UpsertTeamProductAccessed = createAsyncThunk(
+    `${API_URL.user.assignAccessed}-patch`,
+    async (data: AssignProduct, { rejectWithValue }) => {
+        try {
+            const upsert = container.resolve<UpsertTeamProductAccessedUseCase>(TOKENS.UpsertTeamProductAccessedUseCase)
+            return await upsert.execute(data)
+        } catch (error: unknown) {
+            if (error instanceof UpsertTeamAssignProductError) {
                 return rejectWithValue(error.message || 'Something went wrong')
             }
 
@@ -154,10 +200,20 @@ const teamSlice = createSlice({
             state.form.serverError = action.payload;
         },
 
+        toggleInsuranceProductSwitch: (state, action: PayloadAction<string>) => {
+            const productValue = action.payload;
+            state.form.insuranceProducts.accessed[productValue] = !state.form.insuranceProducts.accessed[productValue];
+        },
+
+        toggInsuranceProductUuid: (state, action: PayloadAction<string>) => {
+            state.form.insuranceProducts.uuid = action.payload;
+        },
+
         resetTeamForm(state) {
             state.form = {
                 data: emptyFormData,
                 password: emptyPassword,
+                insuranceProducts: emptyProducts,
                 errors: {},
                 isLoading: false,
                 serverError: null,
@@ -182,6 +238,9 @@ const teamSlice = createSlice({
                 state.current_page = action.payload.data.current_page
                 state.last_page = action.payload.data.last_page
                 state.total = action.payload.data.total
+            })
+            .addCase(TeamAccessed.fulfilled, (state: TeamState, action: PayloadAction<TeamAccessedResponse>) => {
+                state.form.insuranceProducts.accessed = action.payload.data.accessed
             });
 
         const handleSubmitPending = (state: TeamState) => { state.submit_status = 'loading'; };
@@ -197,13 +256,18 @@ const teamSlice = createSlice({
             .addCase(UpdateTeamStatus.rejected, handleSubmitRejected)
             .addCase(UpdateTeamPassword.pending, handleSubmitPending)
             .addCase(UpdateTeamPassword.fulfilled, handleSubmitFulfilled)
-            .addCase(UpdateTeamPassword.rejected, handleSubmitRejected);
+            .addCase(UpdateTeamPassword.rejected, handleSubmitRejected)
+            .addCase(UpsertTeamProductAccessed.pending, handleSubmitPending)
+            .addCase(UpsertTeamProductAccessed.fulfilled, handleSubmitFulfilled)
+            .addCase(UpsertTeamProductAccessed.rejected, handleSubmitRejected);
     }
 })
 
 export const {
     setTeamFormField,
     setTeamFormPasswordField,
+    toggleInsuranceProductSwitch,
+    toggInsuranceProductUuid,
     setTeamFormErrors,
     setTeamFormLoading,
     setTeamFormServerError,

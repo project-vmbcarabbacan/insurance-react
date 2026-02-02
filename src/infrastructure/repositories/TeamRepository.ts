@@ -1,8 +1,8 @@
 import type { ApiService } from "../api/ApiService";
 import { API_URL } from "../api/Urls";
 import type { TeamContract } from "../../domain/contracts/TeamContract";
-import type { TeamMessageResponse, TeamResponse } from "../dtos/TeamResponse";
-import type { AddTeam, TeamFilter, TeamPassword, TeamStatus } from "../../core/interfaces/Team";
+import type { TeamAccessedResponse, TeamMessageResponse, TeamResponse } from "../dtos/TeamResponse";
+import type { AddTeam, AssignProduct, TeamFilter, TeamPassword, TeamStatus } from "../../core/interfaces/Team";
 
 export class TeamRepository implements TeamContract {
     constructor(private api: ApiService) { }
@@ -12,6 +12,10 @@ export class TeamRepository implements TeamContract {
             params: { ...data }
         })
         return response
+    }
+
+    async teamAccessed(uuid: string): Promise<TeamAccessedResponse> {
+        return await this.api.get<TeamAccessedResponse>(`/${API_URL.user.accessed}/${uuid}`)
     }
 
     async createTeam(data: AddTeam): Promise<TeamMessageResponse> {
@@ -30,6 +34,12 @@ export class TeamRepository implements TeamContract {
     async updateTeamPassword(data: TeamPassword): Promise<TeamMessageResponse> {
         const { uuid, ...payload } = data
         return await this.api.patch<TeamMessageResponse>(`/${API_URL.user.password}/${uuid}`, payload)
+    }
+
+    async upsertTeamAssignProduct(data: AssignProduct): Promise<TeamMessageResponse> {
+        const { uuid, ...payload } = data
+        return await this.api.patch<TeamMessageResponse>(`/${API_URL.user.assignAccessed}/${uuid}`, payload)
+
     }
 
 }

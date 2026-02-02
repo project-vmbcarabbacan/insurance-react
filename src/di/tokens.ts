@@ -20,8 +20,11 @@ export const TOKENS = {
     UpsertTeamUseCase: 'UpsertTeamUseCase',
     UpdateTeamStatusUseCase: 'UpdateTeamStatusUseCase',
     UpdateTeamPasswordUseCase: 'UpdateTeamPasswordUseCase',
+    TeamAccessedUseCase: 'TeamAccessedUseCase',
+    UpsertTeamProductAccessedUseCase: 'UpsertTeamProductAccessedUseCase',
 
     /* SETTINGS */
     SettingManageTeam: 'SettingManageTeam',
+    InsuranceProductUseCase: 'InsuranceProductUseCase',
 
 }

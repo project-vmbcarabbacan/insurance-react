@@ -16,6 +16,7 @@ import { RowActionMenu } from "../components/TeamManagement/RowAction";
 import { BulkActionMenu } from "../components/TeamManagement/BulkAction";
 import type { TeamStatuses } from "../core/types/Status";
 import { UpdatePasswordMember } from "../components/TeamManagement/UpdatePasswordMember";
+import { AssignProduct } from "../components/TeamManagement/AssignProduct";
 
 export function ManageTeam() {
   const dispatch = useAppDispatch();
@@ -31,6 +32,7 @@ export function ManageTeam() {
   const [openRowId, setOpenRowId] = useState<string | null>(null);
   const [mopen, setMopen] = useState(false);
   const [popen, setPopen] = useState(false);
+  const [apopen, setApopen] = useState(false);
   const [bulkOpen, setBulkOpen] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
 
@@ -45,6 +47,7 @@ export function ManageTeam() {
   /* ------------------------ Handlers ------------------------ */
   const openMember = () => setMopen(true);
   const openPassword = () => setPopen(true);
+  const openAssignProduct = () => setApopen(true);
 
   const handlePageChange = useCallback((page: number) => {
     setFilterData(prev => ({ ...prev, page }));
@@ -140,6 +143,7 @@ export function ManageTeam() {
           handleAction={handleBulkAction}
           handleMember={openMember}
           handlePassword={openPassword}
+          handleAssignProduct={openAssignProduct}
         />
       ),
     },
@@ -157,7 +161,17 @@ export function ManageTeam() {
           <p className="text-gray-500 dark:text-gray-400">Manage your teams</p>
         </div>
         <div className="flex gap-3">
-          <UpdatePasswordMember open={popen} onOpenChange={setPopen} />
+          {/* Modal Dialogs */}
+          <UpdatePasswordMember
+            open={popen}
+            onOpenChange={setPopen}
+          />
+
+          <AssignProduct
+            open={apopen}
+            onOpenChange={setApopen}
+          />
+
           <UpsertMember
             open={mopen}
             onOpenChange={setMopen}

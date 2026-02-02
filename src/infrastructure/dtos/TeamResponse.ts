@@ -1,5 +1,8 @@
 import type { Team } from "../../core/interfaces/Team";
 
+export interface keyBoolean {
+    [key: string]: boolean
+}
 interface LinksResponse {
     active: boolean
     label: string
@@ -23,9 +26,18 @@ interface PaginatorResponse {
     links: LinksResponse[]
 }
 
+interface Accessed {
+    accessed: keyBoolean
+}
+
 export interface TeamResponse {
     data: PaginatorResponse,
     message: string
+}
+
+export interface TeamAccessedResponse {
+    message: string,
+    data: Accessed
 }
 
 export interface TeamMessageResponse {

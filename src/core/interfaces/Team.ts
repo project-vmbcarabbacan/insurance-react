@@ -1,3 +1,5 @@
+import type { keyBoolean } from "../../infrastructure/dtos/TeamResponse"
+
 export interface TeamFilter {
     status: string
     page: number
@@ -30,3 +32,8 @@ export interface TeamStatus {
 }
 
 export type TeamPassword = Pick<AddTeam, 'uuid' | 'password'>
+
+export interface AssignProduct {
+    uuid: string,
+    accessed: keyBoolean
+}

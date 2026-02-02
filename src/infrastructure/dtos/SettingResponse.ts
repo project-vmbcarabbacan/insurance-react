@@ -6,7 +6,16 @@ interface dataResponse {
     statuses: LabelValue[]
 }
 
+interface productResponse {
+    products: LabelValue[]
+}
+
 export interface SettingManageTeamResponse {
     data: dataResponse
+    message: string
+}
+
+export interface SettingInsuranceProductResponse {
+    data: productResponse
     message: string
 }

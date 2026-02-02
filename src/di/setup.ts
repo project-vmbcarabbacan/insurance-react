@@ -15,10 +15,13 @@ import { LogoutUseCase } from "../app/usecases/auths/LogoutUseCase";
 import { CsrfUseCase } from "../app/usecases/auths/CsrfUseCase.ts";
 import { CurrentUseCase } from "../app/usecases/users/CurrentUseCase.ts";
 import { TeamUseCase } from "../app/usecases/users/TeamUseCase.ts";
-import { ManageTeamUseCase } from "../app/usecases/settings/ManageTeamUseCase.ts";
 import { UpsertTeamUseCase } from "../app/usecases/users/UpsertTeamUseCase.ts";
 import { UpdateTeamStatusUseCase } from "../app/usecases/users/UpdateTeamStatusUseCase.ts";
 import { UpdateTeamPasswordUseCase } from "../app/usecases/users/UpdateTeamPasswordUseCase.ts";
+import { TeamAccessedUseCase } from "../app/usecases/users/TeamAccessedUseCase.ts";
+import { UpsertTeamProductAccessedUseCase } from "../app/usecases/users/UpsertTeamProductAccessedUseCase.ts";
+import { ManageTeamUseCase } from "../app/usecases/settings/ManageTeamUseCase.ts";
+import { InsuranceProductUseCase } from "../app/usecases/settings/InsuranceProductUseCase.ts";
 
 
 export function setup() {
@@ -49,9 +52,12 @@ export function setup() {
     const upsertTeamUseCase = new UpsertTeamUseCase(teamRepository)
     const updateTeamStatusUseCase = new UpdateTeamStatusUseCase(teamRepository)
     const updateTeamPasswordUseCase = new UpdateTeamPasswordUseCase(teamRepository)
+    const teamAccessedUseCase = new TeamAccessedUseCase(teamRepository)
+    const upsertTeamProductAccessedUseCase = new UpsertTeamProductAccessedUseCase(teamRepository)
 
     /* settings */
     const manageTeamUseCase = new ManageTeamUseCase(settingRepository)
+    const insuranceProductUseCase = new InsuranceProductUseCase(settingRepository)
 
 
     /**
@@ -81,8 +87,11 @@ export function setup() {
     container.register(TOKENS.UpsertTeamUseCase, upsertTeamUseCase)
     container.register(TOKENS.UpdateTeamStatusUseCase, updateTeamStatusUseCase)
     container.register(TOKENS.UpdateTeamPasswordUseCase, updateTeamPasswordUseCase)
+    container.register(TOKENS.TeamAccessedUseCase, teamAccessedUseCase)
+    container.register(TOKENS.UpsertTeamProductAccessedUseCase, upsertTeamProductAccessedUseCase)
 
     /* settings */
     container.register(TOKENS.SettingManageTeam, manageTeamUseCase)
+    container.register(TOKENS.InsuranceProductUseCase, insuranceProductUseCase)
 
 }
