@@ -1,0 +1,1 @@
+export type TeamStatuses = "active" | "inactive" | "suspended" | "deleted";
