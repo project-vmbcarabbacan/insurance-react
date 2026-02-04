@@ -46,6 +46,10 @@ export function Customers() {
     setCopen(true)
   };
 
+  const openLeadCreation = (uuid: string, product: string) => {
+    alert(`${product}-${uuid}`)
+  }
+
   const handlePageChange = useCallback((page: number) => {
     setFilterData(prev => ({ ...prev, page }));
   }, []);
@@ -144,6 +148,7 @@ export function Customers() {
           openRowId={openRowId}
           setOpenRowId={setOpenRowId}
           handleEdit={openCustomer}
+          handleAdd={openLeadCreation}
         />
       ),
     },

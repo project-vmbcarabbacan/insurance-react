@@ -1,17 +1,24 @@
 import type { UpsertCustomer as iUpsertCustomer } from "../../core/interfaces/Customer";
 import { MotionDialog } from "../Layout/ui/Dialog";
 import { useSelector } from "react-redux";
-import { SelectCountryCodes, SelectTypes } from "../../app/stores/selectors/settingSelectors";
+import { SelectCountryCodes, SelectCustomerSources, SelectGenders, SelectTypes } from "../../app/stores/selectors/settingSelectors";
 import { useAppDispatch } from "../../app/stores/hooks";
 import InputField from "../Layout/ui/Input";
 import SelectField from "../Layout/ui/Select";
 import type { RootState } from "../../app/stores/store";
 import { validateCustomerForm } from "../../core/validations/validateCustomerForm";
-import { resetCustomerForm, setCustomerFormErrors, setCustomerFormField, UpsertCustomerPost } from "../../app/stores/slices/customerSlice";
+import { resetCustomerForm, resetCustomerFormErrors, setCustomerFormErrors, setCustomerFormField, UpsertCustomerPost } from "../../app/stores/slices/customerSlice";
 import PhoneNumberInput from "../Layout/ui/PhoneNumber";
 import RadioGroupInput from "../Layout/ui/RadioGroup";
 import DateInput from "../Layout/ui/Date";
 
+const SectionHeader = ({ title }: { title: string }) => (
+    <div className="sm:col-span-8 mt-6">
+        <h3 className="text-sm font-semibold text-gray-900 border-b pb-2">
+            {title}
+        </h3>
+    </div>
+);
 
 export const UpsertCustomer: React.FC<{
     open: boolean;
@@ -24,10 +31,16 @@ export const UpsertCustomer: React.FC<{
 }) => {
         const types = useSelector(SelectTypes);
         const countryCodes = useSelector(SelectCountryCodes);
+        const customerSources = useSelector(SelectCustomerSources);
+        const genders = useSelector(SelectGenders);
         const dispatch = useAppDispatch();
         const { data, errors, isLoading, serverError } = useSelector(
             (state: RootState) => state.customer.form
         );
+
+        const today = new Date();
+        const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+        const maxDate = eighteenYearsAgo.toISOString().split("T")[0];
 
         /* ------------------------ Handlers ------------------------ */
 
@@ -69,102 +82,180 @@ export const UpsertCustomer: React.FC<{
                             <div className="mt-2 text-sm text-red-600">{serverError}</div>
                         )}
 
-                        <div className="mt-5 grid grid-cols-1 sm:grid-cols-8 gap-4">
-                            <div className="sm:col-span-4">
-                                <InputField
-                                    id="first-name"
-                                    label="First Name"
-                                    type="text"
-                                    name="first_name"
-                                    value={data.first_name}
-                                    error={errors.first_name}
-                                    onChange={e => handleFieldChange("first_name", e.target.value)}
-                                    placeholder="Enter your first name"
-                                />
-                            </div>
-                            <div className="sm:col-span-4">
-                                <InputField
-                                    id="last-name"
-                                    label="Last Name"
-                                    type="text"
-                                    name="last_name"
-                                    value={data.last_name}
-                                    error={errors.last_name}
-                                    onChange={e => handleFieldChange("last_name", e.target.value)}
-                                    placeholder="Enter your last name"
-                                />
-                            </div>
+                        <div className="flex flex-col max-h-[65vh] overflow-hidden">
+                            <div
+                                className="mt-5 grid grid-cols-1 sm:grid-cols-8 gap-4 overflow-y-auto h-full pr-2"
+                                onWheel={(e) => e.stopPropagation()}
+                            >
+                                {/* ================= BASIC INFORMATION ================= */}
+                                <SectionHeader title="Basic Information" />
 
-                            <div className="sm:col-span-4">
-                                <InputField
-                                    id="email"
-                                    label="Email address"
-                                    type="email"
-                                    name="email"
-                                    value={data.email}
-                                    error={errors.email}
-                                    onChange={e => handleFieldChange("email", e.target.value)}
-                                    placeholder="Enter your email"
-                                />
-                            </div>
+                                <div className="sm:col-span-8">
+                                    <RadioGroupInput
+                                        id="type"
+                                        label="Customer Type"
+                                        name="type"
+                                        value={data.type}
+                                        disabled={Boolean(data.uuid)}
+                                        onChange={e => {
+                                            dispatch(resetCustomerFormErrors())
+                                            handleFieldChange("type", e.target.value)
+                                        }}
+                                        options={types}
+                                        error={errors.type}
+                                        inline
+                                    />
+                                </div>
 
-                            <div className="sm:col-span-4">
-                                <PhoneNumberInput
-                                    id="phone-number"
-                                    label="Phone number"
-                                    phoneName="phone_number"
-                                    countryCode={data.phone_country_code}
-                                    phoneNumber={data.phone_number}
-                                    countryOptions={countryCodes}
-                                    onCountryChange={e => handleFieldChange("phone_country_code", e)}
-                                    onPhoneChange={e => handleFieldChange("phone_number", e.target.value)}
-                                    error={errors.phone_number}
-                                />
-                            </div>
-
-                            <div className="sm:col-span-4">
-                                <SelectField
-                                    id="type"
-                                    label="Select type"
-                                    name="type"
-                                    value={data.type}
-                                    options={types}
-                                    onChange={e => handleFieldChange("type", e.target.value)}
-                                    error={errors.type}
-                                    placeholder="Select type"
-                                />
-                            </div>
-
-                            <div className="sm:col-span-4">
-                                <DateInput
-                                    id="dob"
-                                    label="Date of birth"
-                                    name="dob"
-                                    value={data.dob}
-                                    onChange={e => handleFieldChange("dob", e.target.value)}
-                                    error={errors.dob}
-                                />
-                            </div>
-
-                            <div className="sm:col-span-8">
-                                <RadioGroupInput
-                                    id="gender"
-                                    label="Gender"
-                                    name="gender"
-                                    value={data.gender}
-                                    onChange={e => handleFieldChange("gender", e.target.value)}
-                                    options={[
-                                        { label: "Male", value: "male" },
-                                        { label: "Female", value: "female" },
-                                        { label: "Other", value: "other" },
-                                    ]}
-                                    error={errors.gender}
-                                    inline
-                                />
-                            </div>
+                                {
+                                    data.type === 'individual' && (
+                                        <>
+                                            <div className="sm:col-span-4">
+                                                <InputField
+                                                    id="first-name"
+                                                    label="First Name"
+                                                    type="text"
+                                                    name="first_name"
+                                                    value={(data.first_name as string)}
+                                                    error={errors.first_name}
+                                                    onChange={e => handleFieldChange("first_name", e.target.value)}
+                                                    placeholder="Enter your first name"
+                                                />
+                                            </div>
+                                            <div className="sm:col-span-4">
+                                                <InputField
+                                                    id="last-name"
+                                                    label="Last Name"
+                                                    type="text"
+                                                    name="last_name"
+                                                    value={(data.last_name as string)}
+                                                    error={errors.last_name}
+                                                    onChange={e => handleFieldChange("last_name", e.target.value)}
+                                                    placeholder="Enter your last name"
+                                                />
+                                            </div>
 
 
+                                            <div className="sm:col-span-4">
+                                                <DateInput
+                                                    id="dob"
+                                                    label="Date of birth"
+                                                    name="dob"
+                                                    value={(data.dob as string)}
+                                                    max={maxDate}
+                                                    onChange={e => handleFieldChange("dob", e.target.value)}
+                                                    error={errors.dob}
+                                                />
+                                            </div>
+
+                                            <div className="sm:col-span-8">
+                                                <RadioGroupInput
+                                                    id="gender"
+                                                    label="Gender"
+                                                    name="gender"
+                                                    value={data.gender}
+                                                    onChange={e => handleFieldChange("gender", e.target.value)}
+                                                    options={genders}
+                                                    error={errors.gender}
+                                                    inline
+                                                />
+                                            </div>
+                                        </>
+                                    )
+                                }
+
+                                {
+                                    data.type === "corporate" && (
+                                        <>
+                                            <div className="sm:col-span-4">
+                                                <InputField
+                                                    id="company-name"
+                                                    label="Company Name"
+                                                    type="text"
+                                                    name="company_name"
+                                                    value={(data.company_name as string)}
+                                                    error={errors.company_name}
+                                                    onChange={e => handleFieldChange("company_name", e.target.value)}
+                                                    placeholder="Enter your company"
+                                                />
+                                            </div>
+
+                                            <div className="sm:col-span-4">
+                                                <InputField
+                                                    id="contact-person"
+                                                    label="Contact Person"
+                                                    type="text"
+                                                    name="contact_person"
+                                                    value={(data.contact_person as string)}
+                                                    error={errors.contact_person}
+                                                    onChange={e => handleFieldChange("contact_person", e.target.value)}
+                                                    placeholder="Enter contact person"
+                                                />
+                                            </div>
+
+                                            <div className="sm:col-span-4">
+                                                <InputField
+                                                    id="registration-no"
+                                                    label="Registration Number"
+                                                    type="text"
+                                                    name="registration_no"
+                                                    value={(data.registration_no as string)}
+                                                    error={errors.registration_no}
+                                                    onChange={e => handleFieldChange("registration_no", e.target.value)}
+                                                    placeholder="Enter registration number"
+                                                />
+                                            </div>
+                                        </>
+                                    )
+                                }
+
+                                {/* ================= CONTACT INFORMATION ================= */}
+                                <SectionHeader title="Contact Information" />
+
+                                <div className="sm:col-span-4">
+                                    <InputField
+                                        id="email"
+                                        label="Email address"
+                                        type="email"
+                                        name="email"
+                                        value={data.email}
+                                        error={errors.email}
+                                        onChange={e => handleFieldChange("email", e.target.value)}
+                                        placeholder="Enter your email"
+                                    />
+                                </div>
+
+                                <div className="sm:col-span-4">
+                                    <PhoneNumberInput
+                                        id="phone-number"
+                                        label="Phone number"
+                                        phoneName="phone_number"
+                                        countryCode={data.phone_country_code}
+                                        phoneNumber={data.phone_number}
+                                        countryOptions={countryCodes}
+                                        onCountryChange={e => handleFieldChange("phone_country_code", e)}
+                                        onPhoneChange={e => handleFieldChange("phone_number", e.target.value)}
+                                        error={errors.phone_number}
+                                    />
+                                </div>
+                                {/* ================= LEAD INFORMATION ================= */}
+                                <SectionHeader title="Lead Information" />
+                                <div className="sm:col-span-4">
+                                    <SelectField
+                                        id="customer-source"
+                                        label="Customer Source"
+                                        name="customer_source"
+                                        value={data.customer_source}
+                                        onChange={e => handleFieldChange("customer_source", e.target.value)}
+                                        options={customerSources}
+                                        placeholder="Select source"
+                                        error={errors.customer_source}
+                                    />
+                                </div>
+
+                            </div>
                         </div>
+
                     </div>
 
                     {/* Actions */}

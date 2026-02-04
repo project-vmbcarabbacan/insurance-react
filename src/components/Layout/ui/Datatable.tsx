@@ -161,7 +161,21 @@ export function DataTable<T extends Record<string, any>>({
                                     }
                                     {columns.map((col) => (
                                         <td key={col.key as string} className="p-3 text-gray-800 dark:text-gray-100">
-                                            {col.render ? col.render(row[col.key as keyof T], row) : row[col.key as keyof T]}
+                                            {col.render ? (
+                                                // If render returns ReactNode, just render it
+                                                col.render(row[col.key as keyof T], row)
+                                            ) : (
+                                                // If value is string with HTML, render it
+                                                typeof row[col.key as keyof T] === "string" ? (
+                                                    <span
+                                                        dangerouslySetInnerHTML={{
+                                                            __html: row[col.key as keyof T] as string,
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    row[col.key as keyof T]
+                                                )
+                                            )}
                                         </td>
                                     ))}
                                     {rowActions.length > 0 && (

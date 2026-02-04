@@ -1,9 +1,6 @@
 import React from "react";
+import type { LabelValue } from "../../../domain/entities/LabelValue";
 
-export interface LabelValue {
-    label: string;
-    value: string;
-}
 
 interface RadioGroupInputProps {
     id: string;
@@ -15,6 +12,7 @@ interface RadioGroupInputProps {
     error?: string;
     className?: string;
     inline?: boolean; // display radios horizontally
+    disabled?: boolean;
 }
 
 const RadioGroupInput: React.FC<RadioGroupInputProps> = ({
@@ -27,6 +25,7 @@ const RadioGroupInput: React.FC<RadioGroupInputProps> = ({
     error,
     className = "",
     inline = false,
+    disabled = false,
 }) => {
     return (
         <div className={`mb-4 ${className}`}>
@@ -41,6 +40,7 @@ const RadioGroupInput: React.FC<RadioGroupInputProps> = ({
                             value={option.value}
                             checked={value === option.value}
                             onChange={onChange}
+                            disabled={disabled}
                             className={`h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500 ${error ? "border-red-500" : ""
                                 }`}
                         />

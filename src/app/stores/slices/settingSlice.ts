@@ -16,6 +16,8 @@ interface SettingState {
     types: LabelValue[]
     country_codes: LabelValue[]
     insurance_products: LabelValue[]
+    customer_sources: LabelValue[]
+    genders: LabelValue[]
 }
 
 const initialState: SettingState = {
@@ -24,6 +26,8 @@ const initialState: SettingState = {
     types: [],
     country_codes: [],
     insurance_products: [],
+    customer_sources: [],
+    genders: [],
 }
 
 export const SettingManageTeam = createAsyncThunk(
@@ -70,14 +74,17 @@ const settingSlice = createSlice({
             })
             .addCase(ManageCustomer.fulfilled, (state: SettingState, action: PayloadAction<SettingManageCustomerResponse>) => {
                 state.types = action.payload.data.types
+                state.insurance_products = action.payload.data.products
                 state.statuses = action.payload.data.statuses
             })
             .addCase(InsuranceProduct.fulfilled, (state: SettingState, action: PayloadAction<SettingInsuranceProductResponse>) => {
-                state.insuranceProducts = action.payload.data.products
+                state.insurance_products = action.payload.data.products
             })
             .addCase(SettingUpsertCustomer.fulfilled, (state: SettingState, action: PayloadAction<SettingUpsertCustomerResponse>) => {
                 state.types = action.payload.data.types
                 state.statuses = action.payload.data.statuses
+                state.customer_sources = action.payload.data.customer_sources
+                state.genders = action.payload.data.genders
                 state.country_codes = action.payload.data.country_codes
             })
     }

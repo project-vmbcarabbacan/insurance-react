@@ -19,13 +19,17 @@ export interface Customer {
 }
 
 export interface UpsertCustomer {
-    first_name: string
-    last_name: string
     phone_number: string
     phone_country_code: string
     email: string
     type: string
-    dob: string
+    customer_source: string
+    first_name?: string
+    last_name?: string
+    dob?: string
+    company_name?: string
+    contact_person?: string
+    registration_no?: string
     gender: string
     uuid?: string
 }

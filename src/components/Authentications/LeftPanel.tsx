@@ -26,10 +26,10 @@ const benefits = [
         icon: Car,
         text: 'Comprehensive protection for your vehicle, designed for peace of mind.'
     },
-    {
-        icon: Motorbike,
-        text: 'Premium coverage that keeps you protected on every ride.'
-    },
+    // {
+    //     icon: Motorbike,
+    //     text: 'Premium coverage that keeps you protected on every ride.'
+    // },
     {
         icon: HeartPlus,
         text: 'Exceptional care and coverage for your well-being.'

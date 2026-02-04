@@ -29,10 +29,14 @@ interface CustomerState {
 const emptyFormData: UpsertCustomer = {
     first_name: '',
     last_name: '',
+    company_name: '',
+    contact_person: '',
+    registration_no: '',
+    customer_source: '',
     phone_number: '',
     phone_country_code: '+971',
     email: '',
-    type: '',
+    type: 'individual',
     dob: '',
     gender: '',
 };
@@ -125,6 +129,19 @@ const customerSlice = createSlice({
                 serverError: null,
             };
         },
+        resetCustomerFormErrors(state) {
+            state.form.errors = {}
+            state.form.data = {
+                ...state.form.data,
+                first_name: '',
+                last_name: '',
+                company_name: '',
+                contact_person: '',
+                registration_no: '',
+                dob: '',
+                gender: '',
+            }
+        }
     },
     extraReducers: builder => {
         builder
@@ -156,6 +173,7 @@ const customerSlice = createSlice({
 export const {
     setCustomerFormField,
     setCustomerFormErrors,
+    resetCustomerFormErrors,
     setCustomerFormLoading,
     setCustomerFormServerError,
     resetCustomerForm,

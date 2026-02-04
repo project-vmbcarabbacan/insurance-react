@@ -54,11 +54,13 @@ export function MotionDialog({
                         )}
 
                         {/* Content */}
+                        {/* 
+                        onPointerDownOutside={(e) => e.preventDefault()}
+                        onInteractOutside={(e) => e.preventDefault()} 
+                            onEscapeKeyDown={(e) => e.preventDefault()}
+                            */}
                         <Dialog.Content
                             asChild
-                            onPointerDownOutside={(e) => e.preventDefault()}
-                            onInteractOutside={(e) => e.preventDefault()}
-                            onEscapeKeyDown={(e) => e.preventDefault()}
                         >
                             <motion.div
                                 className="fixed left-1/2 top-1/2 w-[90vw] max-w-xl -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-lg"

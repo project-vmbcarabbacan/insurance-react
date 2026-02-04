@@ -9,6 +9,8 @@ interface DateInputProps {
     error?: string;
     placeholder?: string;
     className?: string;
+    min?: string; // optional min date in YYYY-MM-DD
+    max?: string; // optional max date in YYYY-MM-DD
 }
 
 const DateInput: React.FC<DateInputProps> = ({
@@ -20,6 +22,8 @@ const DateInput: React.FC<DateInputProps> = ({
     error,
     placeholder = "Select date",
     className = "",
+    min,
+    max,
 }) => {
     return (
         <div className="mb-4">
@@ -34,6 +38,8 @@ const DateInput: React.FC<DateInputProps> = ({
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
+                min={min}
+                max={max}
                 className={`mt-2 w-full rounded-md border bg-white py-1.5 px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 sm:text-sm/6
                     ${error ? "border-red-500 focus:outline-red-600" : "focus:outline-indigo-600"}
                     ${className}`}

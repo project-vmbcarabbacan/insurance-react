@@ -7,7 +7,7 @@ export class UpsertCustomerUseCase {
     constructor(private customer: CustomerContract) { }
 
     async execute(data: UpsertCustomer): Promise<CustomerMessageResponse> {
-        if (!data.email || !data.first_name || !data.last_name) throw new Error('Invalid input')
+        if (!data.email || !data.phone_number) throw new Error('Invalid input')
 
         try {
             if (data.uuid) {

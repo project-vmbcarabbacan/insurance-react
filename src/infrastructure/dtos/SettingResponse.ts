@@ -9,6 +9,7 @@ interface manageTeamResponse {
 interface manageCustomerResponse {
     statuses: LabelValue[]
     types: LabelValue[]
+    products: LabelValue[]
 }
 
 interface productResponse {
@@ -19,6 +20,8 @@ interface upsertCustomerResponse {
     statuses: LabelValue[]
     types: LabelValue[]
     country_codes: LabelValue[]
+    customer_sources: LabelValue[]
+    genders: LabelValue[]
 }
 
 export interface SettingManageTeamResponse {

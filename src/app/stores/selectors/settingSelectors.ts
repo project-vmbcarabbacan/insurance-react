@@ -6,3 +6,5 @@ export const SelectStatuses = (state: RootState) => state.setting.statuses.map(s
 export const SelectTypes = (state: RootState) => state.setting.types.map(setting => new LabelValue(setting.value, setting.label))
 export const SelectProducts = (state: RootState) => state.setting.insurance_products.map(setting => new LabelValue(setting.label, setting.value))
 export const SelectCountryCodes = (state: RootState) => state.setting.country_codes.map(setting => new LabelValue(setting.value, setting.value))
+export const SelectCustomerSources = (state: RootState) => state.setting.customer_sources.map(setting => new LabelValue(setting.value, setting.label))
+export const SelectGenders = (state: RootState) => state.setting.genders.map(setting => new LabelValue(setting.value, setting.label))
