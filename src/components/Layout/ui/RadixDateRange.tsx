@@ -4,7 +4,7 @@ import { Calendar, type CalendarProps } from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
 // Define the type for the filter data
-interface FilterData {
+export interface FilterData {
     startDate: string | null;
     endDate: string | null;
 }
