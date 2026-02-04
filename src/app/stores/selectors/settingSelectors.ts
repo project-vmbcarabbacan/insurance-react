@@ -3,4 +3,6 @@ import type { RootState } from "../store";
 
 export const selectRoles = (state: RootState) => state.setting.roles.map(setting => new LabelValue(setting.slug, setting.name))
 export const SelectStatuses = (state: RootState) => state.setting.statuses.map(setting => new LabelValue(setting.value, setting.label))
-export const SelectProducts = (state: RootState) => state.setting.insuranceProducts.map(setting => new LabelValue(setting.label, setting.value))
+export const SelectTypes = (state: RootState) => state.setting.types.map(setting => new LabelValue(setting.value, setting.label))
+export const SelectProducts = (state: RootState) => state.setting.insurance_products.map(setting => new LabelValue(setting.label, setting.value))
+export const SelectCountryCodes = (state: RootState) => state.setting.country_codes.map(setting => new LabelValue(setting.value, setting.value))

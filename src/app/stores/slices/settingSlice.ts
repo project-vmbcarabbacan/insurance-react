@@ -4,20 +4,26 @@ import { API_URL } from '../../../infrastructure/api/Urls'
 import { ManageTeamUseCase } from '../../usecases/settings/ManageTeamUseCase'
 import { TOKENS } from '../../../di/tokens'
 import { container } from '../../../di/container'
-import type { SettingInsuranceProductResponse, SettingManageTeamResponse } from '../../../infrastructure/dtos/SettingResponse'
+import type { SettingInsuranceProductResponse, SettingManageCustomerResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse } from '../../../infrastructure/dtos/SettingResponse'
 import type { LabelValue } from '../../../core/interfaces/LabelValue'
 import type { InsuranceProductUseCase } from '../../usecases/settings/InsuranceProductUseCase'
+import type { ManageCustomerUseCase } from '../../usecases/settings/ManageCustomerUseCase'
+import type { ManageUpsertCustomerUseCase } from '../../usecases/settings/ManageUpsertCustomerUseCase'
 
 interface SettingState {
     roles: SlugName[]
     statuses: LabelValue[]
-    insuranceProducts: LabelValue[]
+    types: LabelValue[]
+    country_codes: LabelValue[]
+    insurance_products: LabelValue[]
 }
 
 const initialState: SettingState = {
     roles: [],
     statuses: [],
-    insuranceProducts: [],
+    types: [],
+    country_codes: [],
+    insurance_products: [],
 }
 
 export const SettingManageTeam = createAsyncThunk(
@@ -28,10 +34,26 @@ export const SettingManageTeam = createAsyncThunk(
     }
 )
 
+export const ManageCustomer = createAsyncThunk(
+    API_URL.setting.manageCustomers,
+    async () => {
+        const setting = container.resolve<ManageCustomerUseCase>(TOKENS.ManageCustomerUseCase)
+        return setting.execute()
+    }
+)
+
 export const InsuranceProduct = createAsyncThunk(
     API_URL.setting.insuranceProduct,
     async () => {
         const setting = container.resolve<InsuranceProductUseCase>(TOKENS.InsuranceProductUseCase)
+        return setting.execute()
+    }
+)
+
+export const SettingUpsertCustomer = createAsyncThunk(
+    API_URL.setting.upsertCustomer,
+    async () => {
+        const setting = container.resolve<ManageUpsertCustomerUseCase>(TOKENS.ManageUpsertCustomerUseCase)
         return setting.execute()
     }
 )
@@ -46,8 +68,17 @@ const settingSlice = createSlice({
                 state.roles = action.payload.data.roles
                 state.statuses = action.payload.data.statuses
             })
+            .addCase(ManageCustomer.fulfilled, (state: SettingState, action: PayloadAction<SettingManageCustomerResponse>) => {
+                state.types = action.payload.data.types
+                state.statuses = action.payload.data.statuses
+            })
             .addCase(InsuranceProduct.fulfilled, (state: SettingState, action: PayloadAction<SettingInsuranceProductResponse>) => {
                 state.insuranceProducts = action.payload.data.products
+            })
+            .addCase(SettingUpsertCustomer.fulfilled, (state: SettingState, action: PayloadAction<SettingUpsertCustomerResponse>) => {
+                state.types = action.payload.data.types
+                state.statuses = action.payload.data.statuses
+                state.country_codes = action.payload.data.country_codes
             })
     }
 })

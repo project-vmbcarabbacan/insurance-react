@@ -38,27 +38,27 @@ export const navItems: NavItem[] = [
     //         }
     //     ]
     // },
-    // {
-    //     icon: Users,
-    //     label: 'Customers',
-    //     children: [
-    //         {
-    //             label: 'All Customers',
-    //             path: '/customers',
-    //             icon: Users
-    //         },
-    //         {
-    //             label: 'Companies',
-    //             path: '/companies',
-    //             icon: Building2
-    //         },
-    //         {
-    //             label: 'Add New',
-    //             path: '/customers/new',
-    //             icon: UserPlus
-    //         }
-    //     ]
-    // },
+    {
+        icon: Users,
+        label: 'Customers',
+        children: [
+            {
+                label: 'All Customers',
+                path: '/customers',
+                icon: Users
+            },
+            // {
+            //     label: 'Companies',
+            //     path: '/companies',
+            //     icon: Building2
+            // },
+            // {
+            //     label: 'Add New',
+            //     path: '/customers/new',
+            //     icon: UserPlus
+            // }
+        ]
+    },
     {
         icon: LifeBuoy,
         label: 'Support',
@@ -78,7 +78,7 @@ export const navItems: NavItem[] = [
     {
         icon: Users2Icon,
         label: 'Manage Teams',
-        path: '/manage-teams'
+        path: '/teams'
     },
 
 ];

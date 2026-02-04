@@ -1,0 +1,6 @@
+export class UpsertCustomerError extends Error {
+    constructor(message?: string) {
+        super(message ?? 'Something went wrong');
+        this.name = 'UpsertCustomerError';
+    }
+}

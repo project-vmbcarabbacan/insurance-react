@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { type ButtonHTMLAttributes } from 'react';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode;
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  disabled?: boolean
+  className?: string
 }
 export function Button({
   children,
@@ -34,9 +37,9 @@ export function Button({
   return <motion.button whileTap={{
     scale: 0.98
   }} className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`} disabled={disabled || isLoading} {...props}>
-      {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-      {!isLoading && leftIcon && <span className="mr-2">{leftIcon}</span>}
-      {children}
-      {!isLoading && rightIcon && <span className="ml-2">{rightIcon}</span>}
-    </motion.button>;
+    {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+    {!isLoading && leftIcon && <span className="mr-2">{leftIcon}</span>}
+    {children}
+    {!isLoading && rightIcon && <span className="ml-2">{rightIcon}</span>}
+  </motion.button>;
 }

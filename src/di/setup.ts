@@ -8,11 +8,14 @@ import { AuthRepository } from "../infrastructure/repositories/AuthRepository";
 import { UserRepository } from "../infrastructure/repositories/UserRepository";
 import { SettingRepository } from "../infrastructure/repositories/SettingRepository.ts";
 import { TeamRepository } from "../infrastructure/repositories/TeamRepository.ts";
+import { CustomerRepository } from "../infrastructure/repositories/CustomerRepository.ts";
 
 /*---------------------*usecases*---------------------*/
+/* auth */
 import { LoginUseCase } from "../app/usecases/auths/LoginUseCase";
 import { LogoutUseCase } from "../app/usecases/auths/LogoutUseCase";
 import { CsrfUseCase } from "../app/usecases/auths/CsrfUseCase.ts";
+/* users */
 import { CurrentUseCase } from "../app/usecases/users/CurrentUseCase.ts";
 import { TeamUseCase } from "../app/usecases/users/TeamUseCase.ts";
 import { UpsertTeamUseCase } from "../app/usecases/users/UpsertTeamUseCase.ts";
@@ -20,8 +23,15 @@ import { UpdateTeamStatusUseCase } from "../app/usecases/users/UpdateTeamStatusU
 import { UpdateTeamPasswordUseCase } from "../app/usecases/users/UpdateTeamPasswordUseCase.ts";
 import { TeamAccessedUseCase } from "../app/usecases/users/TeamAccessedUseCase.ts";
 import { UpsertTeamProductAccessedUseCase } from "../app/usecases/users/UpsertTeamProductAccessedUseCase.ts";
+/* customers */
+import { CustomerUseCase } from "../app/usecases/customers/CustomerUseCase.ts";
+import { UpsertCustomerUseCase } from "../app/usecases/customers/UpsertCustomerUseCase.ts";
+import { SingleCustomerUseCase } from "../app/usecases/customers/SingleCustomerUseCase.ts";
+/* settings */
 import { ManageTeamUseCase } from "../app/usecases/settings/ManageTeamUseCase.ts";
 import { InsuranceProductUseCase } from "../app/usecases/settings/InsuranceProductUseCase.ts";
+import { ManageCustomerUseCase } from "../app/usecases/settings/ManageCustomerUseCase.ts";
+import { ManageUpsertCustomerUseCase } from "../app/usecases/settings/ManageUpsertCustomerUseCase.ts";
 
 
 export function setup() {
@@ -36,6 +46,7 @@ export function setup() {
     const userRepository = new UserRepository(api)
     const teamRepository = new TeamRepository(api)
     const settingRepository = new SettingRepository(api)
+    const customerRepository = new CustomerRepository(api)
 
     /*---------------------*usecases*---------------------*/
 
@@ -55,9 +66,16 @@ export function setup() {
     const teamAccessedUseCase = new TeamAccessedUseCase(teamRepository)
     const upsertTeamProductAccessedUseCase = new UpsertTeamProductAccessedUseCase(teamRepository)
 
+    /* customers */
+    const customerUseCase = new CustomerUseCase(customerRepository)
+    const upsertCustomerUseCase = new UpsertCustomerUseCase(customerRepository)
+    const singleCustomerUseCase = new SingleCustomerUseCase(customerRepository)
+
     /* settings */
     const manageTeamUseCase = new ManageTeamUseCase(settingRepository)
     const insuranceProductUseCase = new InsuranceProductUseCase(settingRepository)
+    const manageCustomerUseCase = new ManageCustomerUseCase(settingRepository)
+    const manageUpsertCustomerUseCase = new ManageUpsertCustomerUseCase(settingRepository)
 
 
     /**
@@ -71,6 +89,7 @@ export function setup() {
     container.register(TOKENS.UserRepository, userRepository)
     container.register(TOKENS.TeamRepository, teamRepository)
     container.register(TOKENS.SettingRepository, settingRepository)
+    container.register(TOKENS.CustomerRepository, customerRepository)
 
     /*---------------------*usecases*---------------------*/
 
@@ -90,8 +109,15 @@ export function setup() {
     container.register(TOKENS.TeamAccessedUseCase, teamAccessedUseCase)
     container.register(TOKENS.UpsertTeamProductAccessedUseCase, upsertTeamProductAccessedUseCase)
 
+    /* customers */
+    container.register(TOKENS.CustomerUseCase, customerUseCase)
+    container.register(TOKENS.UpsertCustomerUseCase, upsertCustomerUseCase)
+    container.register(TOKENS.SingleCustomerUseCase, singleCustomerUseCase)
+
     /* settings */
     container.register(TOKENS.SettingManageTeam, manageTeamUseCase)
     container.register(TOKENS.InsuranceProductUseCase, insuranceProductUseCase)
+    container.register(TOKENS.ManageCustomerUseCase, manageCustomerUseCase)
+    container.register(TOKENS.ManageUpsertCustomerUseCase, manageUpsertCustomerUseCase)
 
 }

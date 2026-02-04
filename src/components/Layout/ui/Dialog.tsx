@@ -61,7 +61,7 @@ export function MotionDialog({
                             onEscapeKeyDown={(e) => e.preventDefault()}
                         >
                             <motion.div
-                                className="fixed left-1/2 top-1/2 w-[90vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-lg"
+                                className="fixed left-1/2 top-1/2 w-[90vw] max-w-xl -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-lg"
                                 variants={contentVariants[preset]}
                                 initial="initial"
                                 animate="animate"

@@ -5,15 +5,22 @@ export const API_URL = {
         logout: 'authentication/spa/logout'
     },
     user: {
-        current: 'user/current-loggedin',
+        current: 'user/current/loggedin',
         teams: 'user/teams',
         teamStatus: 'user/teams/update/status',
         password: 'user/teams/password',
         accessed: 'user/teams/assign/product',
         assignAccessed: 'user/teams/upsert/product'
     },
+    customer: {
+        customers: 'customers/search',
+        addCustomer: 'customers/store',
+        updateCustomer: 'customers/update',
+    },
     setting: {
-        manageTeams: 'setting/manage-teams',
-        insuranceProduct: 'setting/insurance-product',
+        manageTeams: 'setting/manage/teams',
+        manageCustomers: 'setting/manage/customers',
+        insuranceProduct: 'setting/insurance/product',
+        upsertCustomer: 'setting/customer/upsert'
     }
 }

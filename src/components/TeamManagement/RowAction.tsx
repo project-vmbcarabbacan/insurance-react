@@ -5,7 +5,6 @@ import { useAppDispatch } from "../../app/stores/hooks";
 import { setTeamFormField, setTeamFormPasswordField, TeamAccessed, toggInsuranceProductUuid } from "../../app/stores/slices/teamSlice";
 import type { Team, AddTeam } from "../../core/interfaces/Team";
 import type { TeamStatuses } from "../../core/types/Status";
-import { InsuranceProduct } from "../../app/stores/slices/settingSlice";
 
 export const RowActionMenu: React.FC<{
     row: Team;

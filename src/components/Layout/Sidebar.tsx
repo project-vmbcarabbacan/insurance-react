@@ -18,7 +18,7 @@ export function Sidebar({
     isMobileOpen,
     closeMobile
 }: SidebarProps) {
-    const [expandedSections, setExpandedSections] = useState<string[]>(['Sales', 'Customers']);
+    const [expandedSections, setExpandedSections] = useState<string[]>([]);
 
     const toggleSection = (label: string) => {
         setExpandedSections(prev => prev.includes(label) ? prev.filter(s => s !== label) : [...prev, label]);

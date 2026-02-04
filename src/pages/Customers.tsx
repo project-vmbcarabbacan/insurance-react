@@ -3,61 +3,58 @@ import { Plus, Search } from "lucide-react";
 import { Button } from "../components/Layout/ui/Button";
 import { DataTable, type Column } from "../components/Layout/ui/Datatable";
 import { useAppDispatch, useAppSelector } from "../app/stores/hooks";
-import { TeamPagination, UpdateTeamStatus } from "../app/stores/slices/teamSlice";
 import { Pagination } from "../components/Layout/ui/Pagination";
 import { useSelector } from "react-redux";
-import { selectTeamsAsEntities } from "../app/stores/selectors/teamSelectors";
-import type { Team } from "../domain/entities/Team";
-import { SettingManageTeam } from "../app/stores/slices/settingSlice";
-import { selectRoles, SelectStatuses } from "../app/stores/selectors/settingSelectors";
-import type { TeamFilter, TeamStatus } from "../core/interfaces/Team";
-import { UpsertMember } from "../components/TeamManagement/UpsertMember";
-import { RowActionMenu } from "../components/TeamManagement/RowAction";
-import { BulkActionMenu } from "../components/TeamManagement/BulkAction";
-import type { TeamStatuses } from "../core/types/Status";
-import { UpdatePasswordMember } from "../components/TeamManagement/UpdatePasswordMember";
-import { AssignProduct } from "../components/TeamManagement/AssignProduct";
+import { ManageCustomer, SettingUpsertCustomer } from "../app/stores/slices/settingSlice";
+import { SelectStatuses, SelectTypes } from "../app/stores/selectors/settingSelectors";
+import type { Customer, CustomerFilter } from "../core/interfaces/Customer";
+import { CustomerPagination, SingleCustomer } from "../app/stores/slices/customerSlice";
+import { CustomerRowAction } from "../components/CustomerManagement/CustomerRowAction";
+import { UpsertCustomer } from "../components/CustomerManagement/UpsertCustomer";
+import RadixDateRange, { type FilterData } from "../components/Layout/ui/RadixDateRange";
+import { selectCustomerAsEntities } from "../app/stores/selectors/customerSelectors";
 
-export function ManageTeam() {
+export function Customers() {
   const dispatch = useAppDispatch();
 
-  const teamData = useSelector(selectTeamsAsEntities);
-  const roles = useSelector(selectRoles);
+  const customerData = useSelector(selectCustomerAsEntities);
+  const types = useSelector(SelectTypes);
   const statuses = useSelector(SelectStatuses);
 
-  const { current_page, last_page } = useAppSelector(state => state.team);
+  const { current_page, last_page } = useAppSelector(state => state.customer);
 
   /* ------------------------ Local State ------------------------ */
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [openRowId, setOpenRowId] = useState<string | null>(null);
-  const [mopen, setMopen] = useState(false);
-  const [popen, setPopen] = useState(false);
-  const [apopen, setApopen] = useState(false);
-  const [bulkOpen, setBulkOpen] = useState(false);
+  const [copen, setCopen] = useState(false);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [filterDate, setFilterDate] = useState<FilterData>({ startDate: null, endDate: null });
 
-  const [filterData, setFilterData] = useState<TeamFilter>({
+  const [filterData, setFilterData] = useState<CustomerFilter>({
     page: 1,
-    status: "active",
     per_page: 10,
+    status: "",
     keyword: "",
-    role_slug: "",
+    type: "",
+    dates: []
   });
 
   /* ------------------------ Handlers ------------------------ */
-  const openMember = () => setMopen(true);
-  const openPassword = () => setPopen(true);
-  const openAssignProduct = () => setApopen(true);
+  const openCustomer = (uuid: string) => {
+    dispatch(SingleCustomer(uuid));
+    dispatch(SettingUpsertCustomer());
+    setCopen(true)
+  };
 
   const handlePageChange = useCallback((page: number) => {
     setFilterData(prev => ({ ...prev, page }));
   }, []);
 
-  const handleRoleChange = useCallback((role_slug: string) => {
+  const handleTypeChange = useCallback((type: string) => {
     setFilterData(prev => ({
       ...prev,
       page: 1,
-      role_slug,
+      type,
     }));
   }, []);
 
@@ -73,19 +70,10 @@ export function ManageTeam() {
     setSearchKeyword(keyword);
   };
 
-  const handleBulkAction = async (uuid: string | string[], status: TeamStatuses) => {
-    let data = {} as TeamStatus;
-    if (Array.isArray(uuid)) {
-      data = { status, uuids: uuid };
-    } else {
-      data = { status, uuid };
-    }
+  const handleDateRange = (date: FilterData) => {
+    setFilterDate(date)
+  }
 
-    await dispatch(UpdateTeamStatus(data));
-    dispatch(TeamPagination(filterData));
-    setSelectedRows([]);
-    setBulkOpen(false);
-  };
 
   /* ------------------------ Debounce Keyword ------------------------ */
   useEffect(() => {
@@ -100,20 +88,34 @@ export function ManageTeam() {
     return () => clearTimeout(timer);
   }, [searchKeyword]);
 
+  useEffect(() => {
+    if (filterDate.startDate && filterDate.endDate) {
+      const timer = setTimeout(() => {
+        setFilterData(prev => ({
+          ...prev,
+          page: 1,
+          dates: [String(filterDate.startDate), String(filterDate.endDate)],
+        }));
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [filterDate]);
+
   /* ------------------------ API Calls ------------------------ */
   useEffect(() => {
-    dispatch(TeamPagination(filterData));
+    dispatch(CustomerPagination(filterData));
   }, [filterData, dispatch]);
 
   useEffect(() => {
-    dispatch(SettingManageTeam());
+    dispatch(ManageCustomer());
   }, [dispatch]);
 
   /* ------------------------ Table Columns ------------------------ */
-  const columns: Column<Team>[] = [
+  const columns: Column<Customer>[] = [
     { key: "name", header: "Name", width: "w-48" },
     { key: "email", header: "Email", width: "w-64" },
-    { key: "role_name", header: "Role", width: "w-32" },
+    { key: "phone", header: "Phone", width: "w-32" },
     {
       key: "status",
       header: "Status",
@@ -131,19 +133,17 @@ export function ManageTeam() {
         </span>
       ),
     },
+    { key: "type", header: "Type", width: "w-32" },
     {
       key: "actions",
       header: "",
       width: "w-16",
       render: (_, row) => (
-        <RowActionMenu
-          row={row as Team}
+        <CustomerRowAction
+          row={row as Customer}
           openRowId={openRowId}
           setOpenRowId={setOpenRowId}
-          handleAction={handleBulkAction}
-          handleMember={openMember}
-          handlePassword={openPassword}
-          handleAssignProduct={openAssignProduct}
+          handleEdit={openCustomer}
         />
       ),
     },
@@ -156,29 +156,23 @@ export function ManageTeam() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Teams
+            Customers
           </h1>
-          <p className="text-gray-500 dark:text-gray-400">Manage your teams</p>
+          <p className="text-gray-500 dark:text-gray-400">Manage your relationships and accounts</p>
         </div>
         <div className="flex gap-3">
           {/* Modal Dialogs */}
-          <UpdatePasswordMember
-            open={popen}
-            onOpenChange={setPopen}
+          <UpsertCustomer
+            open={copen}
+            onOpenChange={setCopen}
+            onSuccess={() => dispatch(CustomerPagination(filterData))}
           />
 
-          <AssignProduct
-            open={apopen}
-            onOpenChange={setApopen}
-          />
-
-          <UpsertMember
-            open={mopen}
-            onOpenChange={setMopen}
-            onSuccess={() => dispatch(TeamPagination(filterData))}
-          />
-          <Button onClick={openMember} leftIcon={<Plus className="w-4 h-4" />}>
-            Add Member
+          <Button
+            onClick={openCustomer}
+            leftIcon={<Plus className="w-4 h-4" />}
+          >
+            Add Customer
           </Button>
         </div>
       </div>
@@ -188,28 +182,15 @@ export function ManageTeam() {
         <div className="p-4 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
           <div className="flex flex-col sm:flex-row sm:gap-3 flex-1 w-full">
 
-            {/* Search */}
-            <div className="relative w-full sm:max-w-md">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search teams..."
-                value={searchKeyword}
-                onChange={e => handleKeywordChange(e.target.value)}
-                className="
-                  w-full pl-12 pr-4 h-12 rounded-lg
-                  border border-gray-300 dark:border-gray-700
-                  bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
-                  placeholder-gray-400 dark:placeholder-gray-500
-                  focus:outline-none focus:ring-2 focus:ring-indigo-500
-                "
-              />
-            </div>
-
             {/* Role Filter */}
+            <RadixDateRange
+              filterData={filterDate}
+              setFilterData={handleDateRange}
+            />
+
             <select
-              value={filterData.role_slug}
-              onChange={e => handleRoleChange(e.target.value)}
+              value={filterData.type}
+              onChange={e => handleTypeChange(e.target.value)}
               className="
                 w-full sm:w-auto h-12 rounded-lg px-4 mt-2 sm:mt-0
                 border border-gray-300 dark:border-gray-700
@@ -217,10 +198,10 @@ export function ManageTeam() {
                 focus:outline-none focus:ring-2 focus:ring-indigo-500
               "
             >
-              <option value="">All Roles</option>
-              {roles.map(role => (
-                <option key={role.value} value={role.value}>
-                  {role.label}
+              <option value="">All Types</option>
+              {types.map(type => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
                 </option>
               ))}
             </select>
@@ -236,8 +217,8 @@ export function ManageTeam() {
                 focus:outline-none focus:ring-2 focus:ring-indigo-500
               "
             >
+              <option value="">All Status</option>
               {statuses
-                .filter(status => !["deleted", "draft"].includes(String(status.value)))
                 .map(status => (
                   <option key={status.value} value={status.value}>
                     {status.label}
@@ -246,28 +227,33 @@ export function ManageTeam() {
             </select>
           </div>
 
-          {/* Bulk Actions */}
-          {selectedRows.length > 0 && (
-            <div className="mt-2 sm:mt-0">
-              <BulkActionMenu
-                selectedRows={selectedRows}
-                open={bulkOpen}
-                onOpenChange={setBulkOpen}
-                handleAction={handleBulkAction}
-              />
-            </div>
-          )}
+          {/* Search */}
+          <div className="relative w-full sm:max-w-md">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search customer..."
+              value={searchKeyword}
+              onChange={e => handleKeywordChange(e.target.value)}
+              className="
+                  w-full pl-12 pr-4 h-12 rounded-lg
+                  border border-gray-300 dark:border-gray-700
+                  bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
+                  placeholder-gray-400 dark:placeholder-gray-500
+                  focus:outline-none focus:ring-2 focus:ring-indigo-500
+                "
+            />
+          </div>
         </div>
 
         {/* Table */}
         <div className="p-6 bg-gray-50 min-h-[200px] overflow-x-auto">
           <DataTable
-            hasCheckBox
             columns={columns.map(col => ({
               ...col,
               width: col.width ? col.width.replace("w-", "min-w-[") + "px]" : "min-w-[80px]",
             }))}
-            data={teamData}
+            data={customerData}
             rowKey={row => row.uuid}
             selectedRowKeys={selectedRows}
             onSelectionChange={rows => setSelectedRows(rows.map(r => r.uuid))}

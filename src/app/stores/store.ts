@@ -3,6 +3,7 @@ import authReducer from './slices/authSlice'
 import userReducer from './slices/userSlice'
 import teamReducer from './slices/teamSlice'
 import settingReducer from './slices/settingSlice'
+import customerReducer from './slices/customerSlice'
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     user: userReducer,
     team: teamReducer,
     setting: settingReducer,
+    customer: customerReducer,
   },
 })
 

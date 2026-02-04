@@ -9,6 +9,7 @@ import { Dashboard } from './pages/Dashboard';
 import { MainLayout } from './components/Layout/MainLayout';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 import { ManageTeam } from './pages/Teams';
+import { Customers } from './pages/Customers';
 
 // const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 //   return <MainLayout>{children}</MainLayout>
@@ -34,7 +35,8 @@ function App() {
         }
       >
         <Route index element={<Dashboard />} />
-        <Route path="manage-teams" element={<ManageTeam />} />
+        <Route path="customers" element={<Customers />} />
+        <Route path="teams" element={<ManageTeam />} />
       </Route>
 
     </Routes>

@@ -3,7 +3,7 @@ import type { Team } from "../../core/interfaces/Team";
 export interface keyBoolean {
     [key: string]: boolean
 }
-interface LinksResponse {
+export interface LinksResponse {
     active: boolean
     label: string
     page?: number
