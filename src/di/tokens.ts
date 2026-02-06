@@ -8,6 +8,7 @@ export const TOKENS = {
     TeamRepository: "TeamRepository",
     SettingRepository: "SettingRepository",
     CustomerRepository: "CustomerRepository",
+    VehicleRepository: "VehicleRepository",
 
     /***USECASES***/
 
@@ -34,5 +35,12 @@ export const TOKENS = {
     InsuranceProductUseCase: 'InsuranceProductUseCase',
     ManageCustomerUseCase: 'ManageCustomerUseCase',
     ManageUpsertCustomerUseCase: 'ManageUpsertCustomerUseCase',
+
+    /* Leads -> Vehicles */
+    UpsertVehicleLeadProductUseCase: 'UpsertVehicleLeadProductUseCase',
+
+
+    /***SERVICES***/
+    VehiclePrerequisiteService: 'VehiclePrerequisiteService'
 
 }

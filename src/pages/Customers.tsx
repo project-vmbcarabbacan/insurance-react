@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { Plus, Search } from "lucide-react";
 import { Button } from "../components/Layout/ui/Button";
 import { DataTable, type Column } from "../components/Layout/ui/Datatable";
@@ -22,6 +23,7 @@ export function Customers() {
   const statuses = useSelector(SelectStatuses);
 
   const { current_page, last_page } = useAppSelector(state => state.customer);
+  const navigate = useNavigate();
 
   /* ------------------------ Local State ------------------------ */
   const [openRowId, setOpenRowId] = useState<string | null>(null);
@@ -41,13 +43,16 @@ export function Customers() {
 
   /* ------------------------ Handlers ------------------------ */
   const openCustomer = (uuid: string) => {
-    dispatch(SingleCustomer(uuid));
+    if (typeof uuid === 'string') {
+      dispatch(SingleCustomer(uuid));
+    }
+
     dispatch(SettingUpsertCustomer());
     setCopen(true)
   };
 
   const openLeadCreation = (uuid: string, product: string) => {
-    alert(`${product}-${uuid}`)
+    navigate(`/${product}/create/${uuid}`)
   }
 
   const handlePageChange = useCallback((page: number) => {

@@ -1,7 +1,7 @@
 import type { UpsertCustomer as iUpsertCustomer } from "../../core/interfaces/Customer";
 import { MotionDialog } from "../Layout/ui/Dialog";
 import { useSelector } from "react-redux";
-import { SelectCountryCodes, SelectCustomerSources, SelectGenders, SelectTypes } from "../../app/stores/selectors/settingSelectors";
+import { SelectAccessed, SelectCountryCodes, SelectCustomerSources, SelectGenders, SelectTypes } from "../../app/stores/selectors/settingSelectors";
 import { useAppDispatch } from "../../app/stores/hooks";
 import InputField from "../Layout/ui/Input";
 import SelectField from "../Layout/ui/Select";
@@ -11,6 +11,9 @@ import { resetCustomerForm, resetCustomerFormErrors, setCustomerFormErrors, setC
 import PhoneNumberInput from "../Layout/ui/PhoneNumber";
 import RadioGroupInput from "../Layout/ui/RadioGroup";
 import DateInput from "../Layout/ui/Date";
+import SwitchField from "../Layout/ui/Switch";
+import { toggleSettingInsuranceProductSwitch } from "../../app/stores/slices/settingSlice";
+import { useState } from "react";
 
 const SectionHeader = ({ title }: { title: string }) => (
     <div className="sm:col-span-8 mt-6">
@@ -33,6 +36,9 @@ export const UpsertCustomer: React.FC<{
         const countryCodes = useSelector(SelectCountryCodes);
         const customerSources = useSelector(SelectCustomerSources);
         const genders = useSelector(SelectGenders);
+        const accessed = useSelector(SelectAccessed);
+        const [accecessedError, setAccecessedError] = useState<boolean>(false)
+
         const dispatch = useAppDispatch();
         const { data, errors, isLoading, serverError } = useSelector(
             (state: RootState) => state.customer.form
@@ -48,16 +54,32 @@ export const UpsertCustomer: React.FC<{
             dispatch(setCustomerFormField({ field, value }));
         };
 
+        const handleSwitchChange = (value: string) => {
+            dispatch(toggleSettingInsuranceProductSwitch(value));
+            setAccecessedError(false)
+        };
+
         const handleSubmit = async (e: React.FormEvent) => {
             e.preventDefault();
 
             const validationErrors = validateCustomerForm(data);
-            if (Object.keys(validationErrors).length > 0) {
+            const allFalse = Object.values(accessed).every(value => value === false);
+
+            if (allFalse && !data.uuid) {
+                setAccecessedError(true)
+            }
+
+            if (Object.keys(validationErrors).length > 0 || allFalse) {
                 dispatch(setCustomerFormErrors(validationErrors));
                 return;
             }
 
-            const result = await dispatch(UpsertCustomerPost(data));
+            const payload = {
+                ...data,
+                accessed
+            }
+
+            const result = await dispatch(UpsertCustomerPost(payload));
 
             if (UpsertCustomerPost.fulfilled.match(result)) {
                 onSuccess?.();
@@ -238,6 +260,36 @@ export const UpsertCustomer: React.FC<{
                                         error={errors.phone_number}
                                     />
                                 </div>
+                                {/* ================= BASIC INFORMATION ================= */}
+
+                                {
+                                    !data.uuid && (
+                                        <>
+                                            <SectionHeader title="Potential Lead" />
+                                            {Object.entries(accessed).map(([key, value]) => (
+                                                <div className="sm:col-span-2">
+                                                    <SwitchField
+                                                        key={key} // Use the key as the React key prop
+                                                        id={key} // Use the key for the id as well
+                                                        label={key} // Assuming key is the product name, you can also map it to labels
+                                                        name={key} // Use the key for the name
+                                                        checked={accessed[key]} // Access the state using the key
+                                                        onChange={() => handleSwitchChange(key)} // Dispatch action to toggle state
+                                                    />
+                                                </div>
+                                            ))}
+                                            {
+                                                accecessedError && (
+                                                    <div className="sm:col-span-8">
+                                                        <p className="mt-1 text-sm text-red-600">Select potential lead</p>
+                                                    </div>
+                                                )
+                                            }
+                                        </>
+                                    )
+                                }
+
+
                                 {/* ================= LEAD INFORMATION ================= */}
                                 <SectionHeader title="Lead Information" />
                                 <div className="sm:col-span-4">

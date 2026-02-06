@@ -29,7 +29,7 @@ const RadioGroupInput: React.FC<RadioGroupInputProps> = ({
 }) => {
     return (
         <div className={`mb-4 ${className}`}>
-            <label htmlFor={id} className="block text-sm/6 font-medium text-gray-900">{label}</label>
+            <label htmlFor={id} className="block text-left text-sm/6 font-medium text-gray-900">{label}</label>
 
             <div className={`mt-2 ${inline ? "flex gap-4" : "flex flex-col gap-2"}`}>
                 {options.map((option) => (
@@ -49,7 +49,7 @@ const RadioGroupInput: React.FC<RadioGroupInputProps> = ({
                 ))}
             </div>
 
-            {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+            {error && <p className="mt-1 text-left text-sm text-red-600">{error}</p>}
         </div>
     );
 };

@@ -17,10 +17,21 @@ export const API_URL = {
         addCustomer: 'customers/store',
         updateCustomer: 'customers/update',
     },
+    lead: {
+        vehicle: {
+            store: 'lead/vehicle/store'
+        }
+    },
     setting: {
         manageTeams: 'setting/manage/teams',
         manageCustomers: 'setting/manage/customers',
         insuranceProduct: 'setting/insurance/product',
-        upsertCustomer: 'setting/customer/upsert'
+        upsertCustomer: 'setting/customer/upsert',
+        vehicle: {
+            prerequisites: 'setting/vehicle/prerequisites',
+            make: 'setting/vehicle/make',
+            model: 'setting/vehicle/model',
+            trim: 'setting/vehicle/trim',
+        }
     }
 }

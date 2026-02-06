@@ -9,6 +9,7 @@ import { UserRepository } from "../infrastructure/repositories/UserRepository";
 import { SettingRepository } from "../infrastructure/repositories/SettingRepository.ts";
 import { TeamRepository } from "../infrastructure/repositories/TeamRepository.ts";
 import { CustomerRepository } from "../infrastructure/repositories/CustomerRepository.ts";
+import { VehicleRepository } from "../infrastructure/repositories/VehicleRepository.ts";
 
 /*---------------------*usecases*---------------------*/
 /* auth */
@@ -32,7 +33,11 @@ import { ManageTeamUseCase } from "../app/usecases/settings/ManageTeamUseCase.ts
 import { InsuranceProductUseCase } from "../app/usecases/settings/InsuranceProductUseCase.ts";
 import { ManageCustomerUseCase } from "../app/usecases/settings/ManageCustomerUseCase.ts";
 import { ManageUpsertCustomerUseCase } from "../app/usecases/settings/ManageUpsertCustomerUseCase.ts";
+/* leads -> vehicles */
+import { UpsertVehicleLeadProductUseCase } from "../app/usecases/leads/vehicles/UpsertVehicleLeadProductUseCase.ts";
 
+/*---------------------*usecases*---------------------*/
+import { VehiclePrerequisiteService } from "../app/services/VehiclePrerequisiteService.ts";
 
 export function setup() {
     /**
@@ -47,6 +52,7 @@ export function setup() {
     const teamRepository = new TeamRepository(api)
     const settingRepository = new SettingRepository(api)
     const customerRepository = new CustomerRepository(api)
+    const vehicleRepository = new VehicleRepository(api)
 
     /*---------------------*usecases*---------------------*/
 
@@ -77,6 +83,11 @@ export function setup() {
     const manageCustomerUseCase = new ManageCustomerUseCase(settingRepository)
     const manageUpsertCustomerUseCase = new ManageUpsertCustomerUseCase(settingRepository)
 
+    /* lead -> vehicles */
+    const upsertVehicleLeadProductUseCase = new UpsertVehicleLeadProductUseCase(vehicleRepository)
+
+    /*---------------------*Services*---------------------*/
+    const vehiclePrerequisiteService = new VehiclePrerequisiteService(settingRepository)
 
     /**
      * CONTAINERIZATION
@@ -90,6 +101,7 @@ export function setup() {
     container.register(TOKENS.TeamRepository, teamRepository)
     container.register(TOKENS.SettingRepository, settingRepository)
     container.register(TOKENS.CustomerRepository, customerRepository)
+    container.register(TOKENS.VehicleRepository, vehicleRepository)
 
     /*---------------------*usecases*---------------------*/
 
@@ -119,5 +131,11 @@ export function setup() {
     container.register(TOKENS.InsuranceProductUseCase, insuranceProductUseCase)
     container.register(TOKENS.ManageCustomerUseCase, manageCustomerUseCase)
     container.register(TOKENS.ManageUpsertCustomerUseCase, manageUpsertCustomerUseCase)
+
+    /* leads -> vehicles */
+    container.register(TOKENS.UpsertVehicleLeadProductUseCase, upsertVehicleLeadProductUseCase)
+
+    /*---------------------*services*---------------------*/
+    container.register(TOKENS.VehiclePrerequisiteService, vehiclePrerequisiteService)
 
 }

@@ -1,7 +1,7 @@
 import type { ApiService } from "../api/ApiService";
 import { API_URL } from "../api/Urls";
 import type { SettingContract } from "../../domain/contracts/SettingContract";
-import type { SettingInsuranceProductResponse, SettingManageCustomerResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse } from "../dtos/SettingResponse";
+import type { SettingInsuranceProductResponse, SettingLeadVehiclePrerequisitesResponse, SettingManageCustomerResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse, SettingVehiclePrerequisitesResponse } from "../dtos/SettingResponse";
 
 export class SettingRepository implements SettingContract {
     constructor(private api: ApiService) { }
@@ -21,5 +21,22 @@ export class SettingRepository implements SettingContract {
     async upsertCustomer(): Promise<SettingUpsertCustomerResponse> {
         return await this.api.get<SettingUpsertCustomerResponse>(`/${API_URL.setting.upsertCustomer}`)
     }
+
+    async vehiclePrerequisites(): Promise<SettingLeadVehiclePrerequisitesResponse> {
+        return await this.api.get<SettingLeadVehiclePrerequisitesResponse>(`/${API_URL.setting.vehicle.prerequisites}`)
+    }
+
+    async vehicleMakes(year: number): Promise<SettingVehiclePrerequisitesResponse> {
+        return await this.api.get<SettingVehiclePrerequisitesResponse>(`/${API_URL.setting.vehicle.make}/${year}`)
+    }
+
+    async vehicleModels(year: number, make_id: number): Promise<SettingVehiclePrerequisitesResponse> {
+        return await this.api.get<SettingVehiclePrerequisitesResponse>(`/${API_URL.setting.vehicle.model}/${year}/${make_id}`)
+    }
+
+    async vehicleTrims(year: number, make_id: number, model_id: number): Promise<SettingVehiclePrerequisitesResponse> {
+        return await this.api.get<SettingVehiclePrerequisitesResponse>(`/${API_URL.setting.vehicle.trim}/${year}/${make_id}/${model_id}`)
+    }
+
 
 }

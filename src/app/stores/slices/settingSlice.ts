@@ -4,11 +4,13 @@ import { API_URL } from '../../../infrastructure/api/Urls'
 import { ManageTeamUseCase } from '../../usecases/settings/ManageTeamUseCase'
 import { TOKENS } from '../../../di/tokens'
 import { container } from '../../../di/container'
-import type { SettingInsuranceProductResponse, SettingManageCustomerResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse } from '../../../infrastructure/dtos/SettingResponse'
+import type { SettingInsuranceProductResponse, SettingLeadVehiclePrerequisitesResponse, SettingManageCustomerResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse, SettingVehiclePrerequisitesResponse } from '../../../infrastructure/dtos/SettingResponse'
 import type { LabelValue } from '../../../core/interfaces/LabelValue'
 import type { InsuranceProductUseCase } from '../../usecases/settings/InsuranceProductUseCase'
 import type { ManageCustomerUseCase } from '../../usecases/settings/ManageCustomerUseCase'
 import type { ManageUpsertCustomerUseCase } from '../../usecases/settings/ManageUpsertCustomerUseCase'
+import type { keyBoolean } from '../../../infrastructure/dtos/TeamResponse'
+import type { VehiclePrerequisiteService } from '../../services/VehiclePrerequisiteService'
 
 interface SettingState {
     roles: SlugName[]
@@ -18,6 +20,17 @@ interface SettingState {
     insurance_products: LabelValue[]
     customer_sources: LabelValue[]
     genders: LabelValue[]
+    accessed: keyBoolean
+    years: LabelValue[]
+    makes: LabelValue[]
+    models: LabelValue[]
+    trims: LabelValue[]
+    claim_histories: LabelValue[]
+    policy_types: LabelValue[]
+    specification_types: LabelValue[]
+    emirates: LabelValue[]
+    countries: LabelValue[]
+    yes_no: LabelValue[]
 }
 
 const initialState: SettingState = {
@@ -28,6 +41,17 @@ const initialState: SettingState = {
     insurance_products: [],
     customer_sources: [],
     genders: [],
+    accessed: {},
+    years: [],
+    makes: [],
+    models: [],
+    trims: [],
+    claim_histories: [],
+    policy_types: [],
+    specification_types: [],
+    emirates: [],
+    countries: [],
+    yes_no: [],
 }
 
 export const SettingManageTeam = createAsyncThunk(
@@ -62,10 +86,47 @@ export const SettingUpsertCustomer = createAsyncThunk(
     }
 )
 
+export const SettingVehiclePrerequisites = createAsyncThunk(
+    API_URL.setting.vehicle.prerequisites,
+    async () => {
+        const setting = container.resolve<VehiclePrerequisiteService>(TOKENS.VehiclePrerequisiteService)
+        return setting.getVehiclePrerequisites()
+    }
+)
+
+export const SettingVehicleMakes = createAsyncThunk(
+    API_URL.setting.vehicle.make,
+    async (data: { year: number }) => {
+        const setting = container.resolve<VehiclePrerequisiteService>(TOKENS.VehiclePrerequisiteService)
+        return setting.getVehicleMakes(data.year)
+    }
+)
+
+export const SettingVehicleModels = createAsyncThunk(
+    API_URL.setting.vehicle.model,
+    async (data: { year: number, make_id: number }) => {
+        const setting = container.resolve<VehiclePrerequisiteService>(TOKENS.VehiclePrerequisiteService)
+        return setting.getVehicleModels(data.year, data.make_id)
+    }
+)
+
+export const SettingVehicleTrims = createAsyncThunk(
+    API_URL.setting.vehicle.trim,
+    async (data: { year: number, make_id: number, model_id: number }) => {
+        const setting = container.resolve<VehiclePrerequisiteService>(TOKENS.VehiclePrerequisiteService)
+        return setting.getVehicleTrims(data.year, data.make_id, data.model_id)
+    }
+)
+
 const settingSlice = createSlice({
     name: 'setting',
     initialState,
-    reducers: {},
+    reducers: {
+        toggleSettingInsuranceProductSwitch: (state, action: PayloadAction<string>) => {
+            const productValue = action.payload;
+            state.accessed[productValue] = !state.accessed[productValue];
+        },
+    },
     extraReducers: builder => {
         builder
             .addCase(SettingManageTeam.fulfilled, (state: SettingState, action: PayloadAction<SettingManageTeamResponse>) => {
@@ -86,8 +147,31 @@ const settingSlice = createSlice({
                 state.customer_sources = action.payload.data.customer_sources
                 state.genders = action.payload.data.genders
                 state.country_codes = action.payload.data.country_codes
+                state.accessed = action.payload.data.accessed
+            })
+            .addCase(SettingVehiclePrerequisites.fulfilled, (state: SettingState, action: PayloadAction<SettingLeadVehiclePrerequisitesResponse>) => {
+                state.years = action.payload.data.years
+                state.claim_histories = action.payload.data.claim_histories
+                state.policy_types = action.payload.data.policy_types
+                state.specification_types = action.payload.data.specification_types
+                state.yes_no = action.payload.data.yes_no
+                state.countries = action.payload.data.countries
+                state.emirates = action.payload.data.emirates
+            })
+            .addCase(SettingVehicleMakes.fulfilled, (state: SettingState, action: PayloadAction<SettingVehiclePrerequisitesResponse>) => {
+                state.makes = action.payload.data
+            })
+            .addCase(SettingVehicleModels.fulfilled, (state: SettingState, action: PayloadAction<SettingVehiclePrerequisitesResponse>) => {
+                state.models = action.payload.data
+            })
+            .addCase(SettingVehicleTrims.fulfilled, (state: SettingState, action: PayloadAction<SettingVehiclePrerequisitesResponse>) => {
+                state.trims = action.payload.data
             })
     }
 })
+
+export const {
+    toggleSettingInsuranceProductSwitch,
+} = settingSlice.actions;
 
 export default settingSlice.reducer

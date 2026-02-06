@@ -43,8 +43,8 @@ export const CustomerRowAction: React.FC<{
             if (isOpen && ref.current) {
                 const rect = ref.current.getBoundingClientRect();
                 setPosition({
-                    top: rect.bottom + window.scrollY + 4, // small margin
-                    left: rect.right + window.scrollX - 192, // 192px width of dropdown
+                    top: rect.bottom - 100, // small margin
+                    left: rect.right + window.scrollX - 220, // 192px width of dropdown
                 });
             }
         }, [isOpen]);

@@ -1,5 +1,6 @@
 import type { LabelValue } from "../../core/interfaces/LabelValue"
 import type { SlugName } from "../../core/interfaces/SlugName"
+import type { keyBoolean } from "./TeamResponse"
 
 interface manageTeamResponse {
     roles: SlugName[]
@@ -22,6 +23,17 @@ interface upsertCustomerResponse {
     country_codes: LabelValue[]
     customer_sources: LabelValue[]
     genders: LabelValue[]
+    accessed: keyBoolean
+}
+
+export interface leadVehicleResponse {
+    claim_histories: LabelValue[]
+    policy_types: LabelValue[]
+    specification_types: LabelValue[]
+    yes_no: LabelValue[]
+    emirates: LabelValue[]
+    countries: LabelValue[]
+    years: LabelValue[]
 }
 
 export interface SettingManageTeamResponse {
@@ -41,5 +53,15 @@ export interface SettingInsuranceProductResponse {
 
 export interface SettingUpsertCustomerResponse {
     data: upsertCustomerResponse
+    message: string
+}
+
+export interface SettingVehiclePrerequisitesResponse {
+    data: LabelValue[]
+    message: string
+}
+
+export interface SettingLeadVehiclePrerequisitesResponse {
+    data: leadVehicleResponse
     message: string
 }

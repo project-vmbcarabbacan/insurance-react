@@ -5,11 +5,12 @@ interface SelectFieldProps {
   id: string;
   label: string;
   name: string;
-  value: string;
+  value: string | number;
   options: LabelValue[];
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   error?: string;
   placeholder?: string;
+  defaultPlaceHolderValue?: string | number;
   className?: string;
 }
 
@@ -22,11 +23,12 @@ const SelectField: React.FC<SelectFieldProps> = ({
   onChange,
   error,
   placeholder = "Select option",
+  defaultPlaceHolderValue = "",
   className = "",
 }) => {
   return (
     <div className="mb-4">
-      <label htmlFor={id} className="block text-sm/6 font-medium text-gray-900">
+      <label htmlFor={id} className="block text-left text-sm/6 font-medium text-gray-900">
         {label}
       </label>
 
@@ -44,7 +46,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
                         ${className}
                     `}
         >
-          <option value="">{placeholder}</option>
+          <option value={defaultPlaceHolderValue} disabled>{placeholder}</option>
           {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -67,7 +69,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
         </svg>
       </div>
 
-      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-1 text-left text-sm text-red-600">{error}</p>}
     </div>
   );
 };
