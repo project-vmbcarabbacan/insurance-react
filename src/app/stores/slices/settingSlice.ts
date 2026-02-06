@@ -4,13 +4,14 @@ import { API_URL } from '../../../infrastructure/api/Urls'
 import { ManageTeamUseCase } from '../../usecases/settings/ManageTeamUseCase'
 import { TOKENS } from '../../../di/tokens'
 import { container } from '../../../di/container'
-import type { SettingInsuranceProductResponse, SettingLeadVehiclePrerequisitesResponse, SettingManageCustomerResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse, SettingVehiclePrerequisitesResponse } from '../../../infrastructure/dtos/SettingResponse'
+import type { SettingInsuranceProductResponse, SettingLeadHealthPrerequisitesResponse, SettingLeadVehiclePrerequisitesResponse, SettingManageCustomerResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse, SettingVehiclePrerequisitesResponse } from '../../../infrastructure/dtos/SettingResponse'
 import type { LabelValue } from '../../../core/interfaces/LabelValue'
 import type { InsuranceProductUseCase } from '../../usecases/settings/InsuranceProductUseCase'
 import type { ManageCustomerUseCase } from '../../usecases/settings/ManageCustomerUseCase'
 import type { ManageUpsertCustomerUseCase } from '../../usecases/settings/ManageUpsertCustomerUseCase'
 import type { keyBoolean } from '../../../infrastructure/dtos/TeamResponse'
 import type { VehiclePrerequisiteService } from '../../services/VehiclePrerequisiteService'
+import type { HealthPrerequisiteService } from '../../services/HealthPrerequisiteService'
 
 interface SettingState {
     roles: SlugName[]
@@ -31,6 +32,13 @@ interface SettingState {
     emirates: LabelValue[]
     countries: LabelValue[]
     yes_no: LabelValue[]
+    insurance_fors: LabelValue[]
+    insure_tos: LabelValue[]
+    existing_insurances: LabelValue[]
+    salaries: LabelValue[]
+    relationships: LabelValue[]
+    medical_conditions: LabelValue[]
+    marital_statuses: LabelValue[]
 }
 
 const initialState: SettingState = {
@@ -52,8 +60,16 @@ const initialState: SettingState = {
     emirates: [],
     countries: [],
     yes_no: [],
+    insurance_fors: [],
+    insure_tos: [],
+    existing_insurances: [],
+    salaries: [],
+    relationships: [],
+    medical_conditions: [],
+    marital_statuses: [],
 }
 
+/* pages */
 export const SettingManageTeam = createAsyncThunk(
     API_URL.setting.manageTeams,
     async () => {
@@ -86,6 +102,7 @@ export const SettingUpsertCustomer = createAsyncThunk(
     }
 )
 
+/* Vehicle */
 export const SettingVehiclePrerequisites = createAsyncThunk(
     API_URL.setting.vehicle.prerequisites,
     async () => {
@@ -115,6 +132,15 @@ export const SettingVehicleTrims = createAsyncThunk(
     async (data: { year: number, make_id: number, model_id: number }) => {
         const setting = container.resolve<VehiclePrerequisiteService>(TOKENS.VehiclePrerequisiteService)
         return setting.getVehicleTrims(data.year, data.make_id, data.model_id)
+    }
+)
+
+/* Health */
+export const SettingHealthPrerequisites = createAsyncThunk(
+    API_URL.setting.health.prerequisites,
+    async () => {
+        const setting = container.resolve<HealthPrerequisiteService>(TOKENS.HealthPrerequisiteService)
+        return setting.getHealthPrerequisites()
     }
 )
 
@@ -166,6 +192,19 @@ const settingSlice = createSlice({
             })
             .addCase(SettingVehicleTrims.fulfilled, (state: SettingState, action: PayloadAction<SettingVehiclePrerequisitesResponse>) => {
                 state.trims = action.payload.data
+            })
+            .addCase(SettingHealthPrerequisites.fulfilled, (state: SettingState, action: PayloadAction<SettingLeadHealthPrerequisitesResponse>) => {
+                state.insurance_fors = action.payload.data.insurance_fors
+                state.insure_tos = action.payload.data.insure_tos
+                state.existing_insurances = action.payload.data.existing_insurances
+                state.salaries = action.payload.data.salaries
+                state.genders = action.payload.data.genders
+                state.relationships = action.payload.data.relationships
+                state.yes_no = action.payload.data.yes_no
+                state.countries = action.payload.data.countries
+                state.emirates = action.payload.data.emirates
+                state.medical_conditions = action.payload.data.medical_conditions
+                state.marital_statuses = action.payload.data.marital_statuses
             })
     }
 })

@@ -32,6 +32,9 @@ export const API_URL = {
             make: 'setting/vehicle/make',
             model: 'setting/vehicle/model',
             trim: 'setting/vehicle/trim',
+        },
+        health: {
+            prerequisites: 'setting/health/prerequisites',
         }
     }
 }

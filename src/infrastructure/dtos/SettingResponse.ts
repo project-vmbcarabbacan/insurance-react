@@ -26,7 +26,7 @@ interface upsertCustomerResponse {
     accessed: keyBoolean
 }
 
-export interface leadVehicleResponse {
+export type leadVehicleResponse = {
     claim_histories: LabelValue[]
     policy_types: LabelValue[]
     specification_types: LabelValue[]
@@ -36,32 +36,51 @@ export interface leadVehicleResponse {
     years: LabelValue[]
 }
 
-export interface SettingManageTeamResponse {
+export type leadHealthResponse = {
+    insurance_fors: LabelValue[]
+    insure_tos: LabelValue[]
+    existing_insurances: LabelValue[]
+    salaries: LabelValue[]
+    genders: LabelValue[]
+    yes_no: LabelValue[]
+    emirates: LabelValue[]
+    relationships: LabelValue[]
+    medical_conditions: LabelValue[]
+    marital_statuses: LabelValue[]
+    countries: LabelValue[]
+}
+
+export type SettingManageTeamResponse = {
     data: manageTeamResponse
     message: string
 }
 
-export interface SettingManageCustomerResponse {
+export type SettingManageCustomerResponse = {
     data: manageCustomerResponse
     message: string
 }
 
-export interface SettingInsuranceProductResponse {
+export type SettingInsuranceProductResponse = {
     data: productResponse
     message: string
 }
 
-export interface SettingUpsertCustomerResponse {
+export type SettingUpsertCustomerResponse = {
     data: upsertCustomerResponse
     message: string
 }
 
-export interface SettingVehiclePrerequisitesResponse {
+export type SettingVehiclePrerequisitesResponse = {
     data: LabelValue[]
     message: string
 }
 
-export interface SettingLeadVehiclePrerequisitesResponse {
+export type SettingLeadVehiclePrerequisitesResponse = {
     data: leadVehicleResponse
+    message: string
+}
+
+export type SettingLeadHealthPrerequisitesResponse = {
+    data: leadHealthResponse
     message: string
 }

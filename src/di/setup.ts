@@ -36,8 +36,9 @@ import { ManageUpsertCustomerUseCase } from "../app/usecases/settings/ManageUpse
 /* leads -> vehicles */
 import { UpsertVehicleLeadProductUseCase } from "../app/usecases/leads/vehicles/UpsertVehicleLeadProductUseCase.ts";
 
-/*---------------------*usecases*---------------------*/
+/*---------------------*services*---------------------*/
 import { VehiclePrerequisiteService } from "../app/services/VehiclePrerequisiteService.ts";
+import { HealthPrerequisiteService } from "../app/services/HealthPrerequisiteService.ts";
 
 export function setup() {
     /**
@@ -88,6 +89,7 @@ export function setup() {
 
     /*---------------------*Services*---------------------*/
     const vehiclePrerequisiteService = new VehiclePrerequisiteService(settingRepository)
+    const healthPrerequisiteService = new HealthPrerequisiteService(settingRepository)
 
     /**
      * CONTAINERIZATION
@@ -137,5 +139,6 @@ export function setup() {
 
     /*---------------------*services*---------------------*/
     container.register(TOKENS.VehiclePrerequisiteService, vehiclePrerequisiteService)
+    container.register(TOKENS.HealthPrerequisiteService, healthPrerequisiteService)
 
 }

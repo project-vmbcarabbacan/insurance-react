@@ -1,7 +1,7 @@
 import type { ApiService } from "../api/ApiService";
 import { API_URL } from "../api/Urls";
 import type { SettingContract } from "../../domain/contracts/SettingContract";
-import type { SettingInsuranceProductResponse, SettingLeadVehiclePrerequisitesResponse, SettingManageCustomerResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse, SettingVehiclePrerequisitesResponse } from "../dtos/SettingResponse";
+import type { SettingInsuranceProductResponse, SettingLeadHealthPrerequisitesResponse, SettingLeadVehiclePrerequisitesResponse, SettingManageCustomerResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse, SettingVehiclePrerequisitesResponse } from "../dtos/SettingResponse";
 
 export class SettingRepository implements SettingContract {
     constructor(private api: ApiService) { }
@@ -38,5 +38,7 @@ export class SettingRepository implements SettingContract {
         return await this.api.get<SettingVehiclePrerequisitesResponse>(`/${API_URL.setting.vehicle.trim}/${year}/${make_id}/${model_id}`)
     }
 
-
+    async healthPrerequisites(): Promise<SettingLeadHealthPrerequisitesResponse> {
+        return await this.api.get<SettingLeadHealthPrerequisitesResponse>(`/${API_URL.setting.health.prerequisites}`)
+    }
 }

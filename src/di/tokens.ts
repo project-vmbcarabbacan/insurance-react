@@ -41,6 +41,7 @@ export const TOKENS = {
 
 
     /***SERVICES***/
-    VehiclePrerequisiteService: 'VehiclePrerequisiteService'
+    VehiclePrerequisiteService: 'VehiclePrerequisiteService',
+    HealthPrerequisiteService: 'HealthPrerequisiteService',
 
 }
