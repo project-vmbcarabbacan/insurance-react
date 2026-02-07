@@ -26,8 +26,14 @@ export const validateLeadHealthForm = (data: LeadHealthForm) => {
     }
 
     data.members.forEach((member, index) => {
-        if (!member.relationship) {
+        if (data.insurance_for !== 'domestic' && !member.relationship) {
             errors[`members.${index}.relationship`] = "Relationship is required";
+        }
+        if (!member.first_name) {
+            errors[`members.${index}.first_name`] = "First name is required";
+        }
+        if (!member.last_name) {
+            errors[`members.${index}.last_name`] = "Last name is required";
         }
         if (!member.dob) {
             errors[`members.${index}.dob`] = "Date of Birth is required";

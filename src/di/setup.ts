@@ -10,6 +10,7 @@ import { SettingRepository } from "../infrastructure/repositories/SettingReposit
 import { TeamRepository } from "../infrastructure/repositories/TeamRepository.ts";
 import { CustomerRepository } from "../infrastructure/repositories/CustomerRepository.ts";
 import { VehicleRepository } from "../infrastructure/repositories/VehicleRepository.ts";
+import { HealthRepository } from "../infrastructure/repositories/HealthRepository.ts";
 
 /*---------------------*usecases*---------------------*/
 /* auth */
@@ -35,6 +36,8 @@ import { ManageCustomerUseCase } from "../app/usecases/settings/ManageCustomerUs
 import { ManageUpsertCustomerUseCase } from "../app/usecases/settings/ManageUpsertCustomerUseCase.ts";
 /* leads -> vehicles */
 import { UpsertVehicleLeadProductUseCase } from "../app/usecases/leads/vehicles/UpsertVehicleLeadProductUseCase.ts";
+/* leads -> healths */
+import { UpsertHealthLeadProductUseCase } from "../app/usecases/leads/vehicles/UpsertHealthLeadProductUseCase.ts";
 
 /*---------------------*services*---------------------*/
 import { VehiclePrerequisiteService } from "../app/services/VehiclePrerequisiteService.ts";
@@ -54,6 +57,7 @@ export function setup() {
     const settingRepository = new SettingRepository(api)
     const customerRepository = new CustomerRepository(api)
     const vehicleRepository = new VehicleRepository(api)
+    const healthRepository = new HealthRepository(api)
 
     /*---------------------*usecases*---------------------*/
 
@@ -86,6 +90,8 @@ export function setup() {
 
     /* lead -> vehicles */
     const upsertVehicleLeadProductUseCase = new UpsertVehicleLeadProductUseCase(vehicleRepository)
+    /* lead -> healths */
+    const upsertHealthLeadProductUseCase = new UpsertHealthLeadProductUseCase(healthRepository)
 
     /*---------------------*Services*---------------------*/
     const vehiclePrerequisiteService = new VehiclePrerequisiteService(settingRepository)
@@ -104,6 +110,7 @@ export function setup() {
     container.register(TOKENS.SettingRepository, settingRepository)
     container.register(TOKENS.CustomerRepository, customerRepository)
     container.register(TOKENS.VehicleRepository, vehicleRepository)
+    container.register(TOKENS.HealthRepository, healthRepository)
 
     /*---------------------*usecases*---------------------*/
 
@@ -136,6 +143,8 @@ export function setup() {
 
     /* leads -> vehicles */
     container.register(TOKENS.UpsertVehicleLeadProductUseCase, upsertVehicleLeadProductUseCase)
+    /* leads -> healths */
+    container.register(TOKENS.UpsertHealthLeadProductUseCase, upsertHealthLeadProductUseCase)
 
     /*---------------------*services*---------------------*/
     container.register(TOKENS.VehiclePrerequisiteService, vehiclePrerequisiteService)

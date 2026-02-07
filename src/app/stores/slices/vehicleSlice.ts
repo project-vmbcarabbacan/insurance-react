@@ -5,11 +5,11 @@ import { TOKENS } from '../../../di/tokens'
 import type { UpsertVehicleLeadProductUseCase } from '../../usecases/leads/vehicles/UpsertVehicleLeadProductUseCase'
 import type { VehicleInsuranceForm } from '../../../core/interfaces/LeadVehicle'
 
-interface UserState {
+interface VehicleState {
     status: 'idle' | 'loading' | 'ready' | 'rejected',
 }
 
-const initialState: UserState = {
+const initialState: VehicleState = {
     status: 'idle',
 }
 

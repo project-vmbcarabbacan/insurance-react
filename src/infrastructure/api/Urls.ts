@@ -20,7 +20,10 @@ export const API_URL = {
     lead: {
         vehicle: {
             store: 'lead/vehicle/store'
-        }
+        },
+        health: {
+            store: 'lead/health/store'
+        },
     },
     setting: {
         manageTeams: 'setting/manage/teams',

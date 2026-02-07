@@ -1,4 +1,6 @@
 export type Member = {
+    first_name?: string;
+    last_name?: string;
     relationship?: string;
     dob: string;
     gender: string;

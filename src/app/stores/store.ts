@@ -5,6 +5,7 @@ import teamReducer from './slices/teamSlice'
 import settingReducer from './slices/settingSlice'
 import customerReducer from './slices/customerSlice'
 import leadVehicleReducer from './slices/vehicleSlice'
+import leadHealthReducer from './slices/healthSlice'
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     setting: settingReducer,
     customer: customerReducer,
     lead_vehicle: leadVehicleReducer,
+    lead_health: leadHealthReducer,
   },
 })
 

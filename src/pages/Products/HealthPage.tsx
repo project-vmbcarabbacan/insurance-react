@@ -25,10 +25,21 @@ import type { LeadHealthForm, Member } from "../../core/interfaces/LeadHealth";
 import RadioGroupInput from "../../components/Layout/ui/RadioGroup";
 import SelectField from "../../components/Layout/ui/Select";
 import DateInput from "../../components/Layout/ui/Date";
+import InputField from "../../components/Layout/ui/Input";
+import { TrashIcon } from "lucide-react";
+import { upsertHealthLeadProduct } from "../../app/stores/slices/healthSlice";
 
 const SectionHeader = ({ title }: { title: string }) => (
     <div className="sm:col-span-9 mt-8">
         <h3 className="text-sm font-semibold text-gray-900 border-b pb-2">
+            {title}
+        </h3>
+    </div>
+);
+
+const SectionMemberHeader = ({ title }: { title: string }) => (
+    <div className="sm:col-span-4 mt-2">
+        <h3 className="text-sm text-left font-semibold text-gray-600 underline decoration-2 decoration-gray-400">
             {title}
         </h3>
     </div>
@@ -160,7 +171,7 @@ export const HealthInsurancePage = () => {
             ...prev,
             members: [
                 ...prev.members,
-                { dob: "", gender: "", relationship: "" }
+                { first_name: "", last_name: "", dob: "", gender: "", relationship: "" }
             ]
         }));
     };
@@ -230,7 +241,7 @@ export const HealthInsurancePage = () => {
         }
 
         setIsLoading(true);
-        // await dispatch(upsertHealthLeadProduct(payload));
+        await dispatch(upsertHealthLeadProduct(payload));
         setIsLoading(false);
         navigate("/customers");
     };
@@ -364,7 +375,7 @@ export const HealthInsurancePage = () => {
                                 <DateInput
                                     label="Date of Birth"
                                     value={data.dob}
-                                    max={maxDate}
+                                    max={maxDateAdult}
                                     onChange={e =>
                                         handleChange("dob", e.target.value)
                                     }
@@ -413,13 +424,54 @@ export const HealthInsurancePage = () => {
 
                     {data.members.map((member, index) => (
                         <div key={index} className="sm:col-span-9 grid grid-cols-4 gap-4">
-                            <SelectField
-                                label="Relationship"
-                                value={member.relationship}
-                                options={filteredRelationships}
-                                onChange={e => updateMember(index, "relationship", e.target.value)}
-                                error={errors[`members.${index}.relationship`]}
+                            {/* Header row */}
+                            <div className="col-span-4 flex items-center justify-between">
+                                <SectionMemberHeader title={`Member ${index + 1}`} />
+
+                                <button
+                                    type="button"
+                                    onClick={() => removeMember(index)}
+                                    className="inline-flex items-center gap-1 text-sm font-medium text-red-600 hover:text-red-700 transition"
+                                >
+                                    <TrashIcon className="h-4 w-4" />
+                                    Remove
+                                </button>
+                            </div>
+
+                            <InputField
+                                id="first-name"
+                                label="First Name"
+                                type="text"
+                                name="first_name"
+                                value={member.first_name}
+                                maxLength={100}
+                                onChange={e => updateMember(index, "first_name", e.target.value)}
+                                error={errors[`members.${index}.first_name`]}
+                                placeholder={`Member ${index + 1} first name`}
                             />
+                            <InputField
+                                id="last-name"
+                                label="Last Name"
+                                type="text"
+                                name="last_name"
+                                value={member.last_name}
+                                maxLength={100}
+                                onChange={e => updateMember(index, "last_name", e.target.value)}
+                                error={errors[`members.${index}.last_name`]}
+                                placeholder={`Member ${index + 1} last name`}
+                            />
+
+                            {data.insurance_for !== 'domestic' &&
+                                (
+                                    <SelectField
+                                        label="Relationship"
+                                        value={member.relationship}
+                                        options={filteredRelationships}
+                                        onChange={e => updateMember(index, "relationship", e.target.value)}
+                                        error={errors[`members.${index}.relationship`]}
+                                    />
+                                )
+                            }
 
                             <DateInput
                                 label="DOB"
@@ -442,13 +494,6 @@ export const HealthInsurancePage = () => {
                                 error={errors[`members.${index}.gender`]}
                             />
 
-                            <button
-                                type="button"
-                                onClick={() => removeMember(index)}
-                                className="text-red-600 text-sm mt-6"
-                            >
-                                Remove
-                            </button>
                         </div>
                     ))}
 
