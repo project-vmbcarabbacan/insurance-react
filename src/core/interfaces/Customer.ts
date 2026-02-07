@@ -31,5 +31,6 @@ export interface UpsertCustomer {
     contact_person?: string
     registration_no?: string
     gender: string
+    status?: string
     uuid?: string
 }

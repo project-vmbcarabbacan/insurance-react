@@ -52,7 +52,11 @@ export function Customers() {
   };
 
   const openLeadCreation = (uuid: string, product: string) => {
-    navigate(`/${product}/create/${uuid}`)
+    navigate(`/leads/${product}/create/${uuid}`)
+  }
+
+  const openViewCustomer = (uuid: string) => {
+    navigate(`/customer/${uuid}`)
   }
 
   const handlePageChange = useCallback((page: number) => {
@@ -154,6 +158,7 @@ export function Customers() {
           setOpenRowId={setOpenRowId}
           handleEdit={openCustomer}
           handleAdd={openLeadCreation}
+          handleView={openViewCustomer}
         />
       ),
     },

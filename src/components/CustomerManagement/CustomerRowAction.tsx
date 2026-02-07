@@ -1,7 +1,6 @@
-import { Edit, Car, HeartPlus, Home, Plane, PawPrint, MoreHorizontal } from "lucide-react";
+import { Edit, Car, HeartPlus, Home, Plane, PawPrint, MoreHorizontal, View } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useAppDispatch } from "../../app/stores/hooks";
 import type { Customer } from "../../core/interfaces/Customer";
 import { SelectProducts } from "../../app/stores/selectors/settingSelectors";
 import { useSelector } from "react-redux";
@@ -11,15 +10,16 @@ export const CustomerRowAction: React.FC<{
     openRowId: string | null;
     setOpenRowId: (uuid: string | null) => void;
     handleEdit?: (uuid: string) => void;
+    handleView?: (uuid: string) => void;
     handleAdd?: (uuid: string, product: string) => void;
 }> = ({
     row,
     openRowId,
     setOpenRowId,
     handleEdit,
+    handleView,
     handleAdd,
 }) => {
-        const dispatch = useAppDispatch();
         const products = useSelector(SelectProducts);
 
         const ref = useRef<HTMLButtonElement>(null);
@@ -56,6 +56,15 @@ export const CustomerRowAction: React.FC<{
                 className="fixed w-48 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded shadow-lg z-50"
                 onClick={(e) => e.stopPropagation()}
             >
+                <button
+                    onMouseDown={() => {
+                        handleView?.(row.uuid);
+                        setOpenRowId(null);
+                    }}
+                    className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 text-blue-600"
+                >
+                    <View className="w-4 h-4" /> View Customer
+                </button>
                 <button
                     onMouseDown={() => {
                         handleEdit?.(row.uuid);

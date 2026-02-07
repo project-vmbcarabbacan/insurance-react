@@ -16,6 +16,7 @@ export const API_URL = {
         customers: 'customers/search',
         addCustomer: 'customers/store',
         updateCustomer: 'customers/update',
+        details: 'customers/details'
     },
     lead: {
         vehicle: {

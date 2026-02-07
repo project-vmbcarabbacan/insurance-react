@@ -12,6 +12,7 @@ import { ManageTeam } from './pages/Teams';
 import { Customers } from './pages/Customers';
 import { VehicleInsurancePage } from './pages/Products/VehiclePage';
 import { HealthInsurancePage } from './pages/Products/HealthPage';
+import { CustomerDetails } from './pages/CustomerDetail';
 
 // const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 //   return <MainLayout>{children}</MainLayout>
@@ -38,9 +39,10 @@ function App() {
       >
         <Route index element={<Dashboard />} />
         <Route path="customers" element={<Customers />} />
+        <Route path="customer/:customer_id" element={<CustomerDetails />} />
         <Route path="teams" element={<ManageTeam />} />
-        <Route path="vehicle/create/:customer_id" element={<VehicleInsurancePage />} />
-        <Route path="health/create/:customer_id" element={<HealthInsurancePage />} />
+        <Route path="leads/vehicle/create/:customer_id" element={<VehicleInsurancePage />} />
+        <Route path="leads/health/create/:customer_id" element={<HealthInsurancePage />} />
       </Route>
 
     </Routes>

@@ -1,4 +1,5 @@
 import type { Customer, UpsertCustomer } from "../../core/interfaces/Customer"
+import type { LeadDetail } from "../../core/interfaces/Lead"
 import type { LinksResponse } from "../../infrastructure/dtos/TeamResponse"
 
 interface PaginatorResponse {
@@ -17,8 +18,24 @@ interface PaginatorResponse {
     links: LinksResponse[]
 }
 
+export interface CustomerDetail {
+    uuid: string
+    name: string
+    initials: string
+    contact_person: string
+    phone: string
+    email: string
+    status: string
+    type: string
+}
+
 interface CustomReponse {
     customer: UpsertCustomer
+}
+
+interface CustomerDetails {
+    customer: CustomerDetail
+    leads: LeadDetail[]
 }
 
 export interface CustomerResponse {
@@ -32,5 +49,10 @@ export interface CustomerMessageResponse {
 
 export interface SingleCustomerResponse {
     data: CustomReponse,
+    message: string
+}
+
+export interface CustomerDetailsResponse {
+    data: CustomerDetails
     message: string
 }

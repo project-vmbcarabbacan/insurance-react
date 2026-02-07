@@ -2,7 +2,7 @@ import type { ApiService } from "../api/ApiService";
 import { API_URL } from "../api/Urls";
 import type { CustomerContract } from "../../domain/contracts/CustomerContract";
 import type { CustomerFilter, UpsertCustomer } from "../../core/interfaces/Customer";
-import type { CustomerMessageResponse, CustomerResponse, SingleCustomerResponse } from "../dtos/CustomerResponse";
+import type { CustomerDetailsResponse, CustomerMessageResponse, CustomerResponse, SingleCustomerResponse } from "../dtos/CustomerResponse";
 
 export class CustomerRepository implements CustomerContract {
     constructor(private api: ApiService) { }
@@ -15,6 +15,10 @@ export class CustomerRepository implements CustomerContract {
 
     async customer(uuid: string): Promise<SingleCustomerResponse> {
         return await this.api.get<SingleCustomerResponse>(`/${API_URL.customer.customers}/${uuid}`)
+    }
+
+    async customerDetails(uuid: string): Promise<CustomerDetailsResponse> {
+        return await this.api.get<CustomerDetailsResponse>(`/${API_URL.customer.details}/${uuid}`)
     }
 
     async createCustomer(data: UpsertCustomer): Promise<CustomerMessageResponse> {

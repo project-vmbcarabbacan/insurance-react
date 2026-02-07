@@ -4,10 +4,11 @@ import { API_URL } from "../../../infrastructure/api/Urls";
 import { container } from "../../../di/container";
 import type { CustomerUseCase } from "../../usecases/customers/CustomerUseCase";
 import { TOKENS } from "../../../di/tokens";
-import type { CustomerResponse, SingleCustomerResponse } from "../../../infrastructure/dtos/CustomerResponse";
+import type { CustomerDetail, CustomerDetailsResponse, CustomerResponse, SingleCustomerResponse } from "../../../infrastructure/dtos/CustomerResponse";
 import type { UpsertCustomerUseCase } from "../../usecases/customers/UpsertCustomerUseCase";
 import { UpsertCustomerError } from "../../errors/UpsertCustomerError";
 import type { SingleCustomerUseCase } from "../../usecases/customers/SingleCustomerUseCase";
+import type { CustomerDetailUseCase } from "../../usecases/customers/CustomerDetailUseCase";
 
 interface CustomerFormState {
     data: UpsertCustomer
@@ -19,6 +20,7 @@ interface CustomerFormState {
 interface CustomerState {
     status: 'idle' | 'loading' | 'ready'
     customers: Customer[]
+    customer: CustomerDetail
     current_page: number
     last_page: number
     total: number
@@ -44,6 +46,7 @@ const emptyFormData: UpsertCustomer = {
 const initialState: CustomerState = {
     status: 'idle',
     customers: [],
+    customer: {} as CustomerDetail,
     current_page: 1,
     last_page: 1,
     total: 1,
@@ -73,6 +76,18 @@ export const SingleCustomer = createAsyncThunk(
     async (uuid: string, { rejectWithValue }) => {
         try {
             const single = container.resolve<SingleCustomerUseCase>(TOKENS.SingleCustomerUseCase)
+            return await single.execute(uuid)
+        } catch (error: unknown) {
+            return rejectWithValue('Unexpected api error');
+        }
+    }
+)
+
+export const CustomerDetail = createAsyncThunk(
+    `${API_URL.customer.details}-get`,
+    async (uuid: string, { rejectWithValue }) => {
+        try {
+            const single = container.resolve<CustomerDetailUseCase>(TOKENS.CustomerDetailUseCase)
             return await single.execute(uuid)
         } catch (error: unknown) {
             return rejectWithValue('Unexpected api error');
@@ -157,7 +172,11 @@ const customerSlice = createSlice({
             })
             .addCase(SingleCustomer.fulfilled, (state: CustomerState, action: PayloadAction<SingleCustomerResponse>) => {
                 state.form.data = action.payload.data.customer
-            });
+            })
+            .addCase(CustomerDetail.fulfilled, (state: CustomerState, action: PayloadAction<CustomerDetailsResponse>) => {
+                state.customer = action.payload.data.customer
+            })
+            ;
 
         const handleSubmitPending = (state: CustomerState) => { state.submit_status = 'loading'; };
         const handleSubmitFulfilled = (state: CustomerState) => { state.submit_status = 'completed'; };

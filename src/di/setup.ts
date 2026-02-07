@@ -29,6 +29,7 @@ import { UpsertTeamProductAccessedUseCase } from "../app/usecases/users/UpsertTe
 import { CustomerUseCase } from "../app/usecases/customers/CustomerUseCase.ts";
 import { UpsertCustomerUseCase } from "../app/usecases/customers/UpsertCustomerUseCase.ts";
 import { SingleCustomerUseCase } from "../app/usecases/customers/SingleCustomerUseCase.ts";
+import { CustomerDetailUseCase } from "../app/usecases/customers/CustomerDetailUseCase.ts";
 /* settings */
 import { ManageTeamUseCase } from "../app/usecases/settings/ManageTeamUseCase.ts";
 import { InsuranceProductUseCase } from "../app/usecases/settings/InsuranceProductUseCase.ts";
@@ -81,6 +82,7 @@ export function setup() {
     const customerUseCase = new CustomerUseCase(customerRepository)
     const upsertCustomerUseCase = new UpsertCustomerUseCase(customerRepository)
     const singleCustomerUseCase = new SingleCustomerUseCase(customerRepository)
+    const customerDetailUseCase = new CustomerDetailUseCase(customerRepository)
 
     /* settings */
     const manageTeamUseCase = new ManageTeamUseCase(settingRepository)
@@ -134,6 +136,7 @@ export function setup() {
     container.register(TOKENS.CustomerUseCase, customerUseCase)
     container.register(TOKENS.UpsertCustomerUseCase, upsertCustomerUseCase)
     container.register(TOKENS.SingleCustomerUseCase, singleCustomerUseCase)
+    container.register(TOKENS.CustomerDetailUseCase, customerDetailUseCase)
 
     /* settings */
     container.register(TOKENS.SettingManageTeam, manageTeamUseCase)

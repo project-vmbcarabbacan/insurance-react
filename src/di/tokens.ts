@@ -30,6 +30,7 @@ export const TOKENS = {
     CustomerUseCase: 'CustomerUseCase',
     UpsertCustomerUseCase: 'UpsertCustomerUseCase',
     SingleCustomerUseCase: 'SingleCustomerUseCase',
+    CustomerDetailUseCase: 'CustomerDetailUseCase',
 
     /* SETTINGS */
     SettingManageTeam: 'SettingManageTeam',
