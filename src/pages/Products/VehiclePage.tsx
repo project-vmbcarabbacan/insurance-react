@@ -12,6 +12,8 @@ import type { VehicleInsuranceForm } from "../../core/interfaces/LeadVehicle";
 import { validateLeadVehicleForm } from "../../core/validations/validateLeadVehicleForm";
 import AmountInput from "../../components/Layout/ui/Amount";
 import { upsertVehicleLeadProduct } from "../../app/stores/slices/vehicleSlice";
+import { Button } from "../../components/Layout/ui/Button";
+import { ArrowLeft } from "lucide-react";
 
 const SectionHeader = ({ title }: { title: string }) => (
     <div className="sm:col-span-9 mt-8">
@@ -137,299 +139,308 @@ export const VehicleInsurancePage = () => {
     const maxDate = eighteenYearsAgo.toISOString().split("T")[0];
 
     return (
-        <div className="max-w-6xl mx-auto px-4 py-6">
-            <form onSubmit={handleSubmit}>
-                <div className="border-b border-gray-900/10 pb-12">
-                    <h2 className="text-base font-semibold text-gray-900">
-                        Vehicle Insurance
-                    </h2>
+        <div className="space-y-6">
+            {/* Header */}
+            <div className="flex items-center gap-4 mb-6">
+                <Button variant="ghost" size="sm" onClick={() => navigate('/customers')}>
+                    <ArrowLeft className="w-4 h-4 mr-1" /> Back
+                </Button>
+            </div>
 
-                    <div className="mt-6 grid grid-cols-1 sm:grid-cols-9 gap-4">
-                        {/* ================= VEHICLE DETAILS ================= */}
-                        <SectionHeader title="Vehicle Details" />
+            <div className="max-w-6xl mx-auto px-4 py-6">
+                <form onSubmit={handleSubmit}>
+                    <div className="border-b border-gray-900/10 pb-12">
+                        <h2 className="text-base font-semibold text-gray-900">
+                            Vehicle Insurance
+                        </h2>
 
-
-                        <div className="sm:col-span-3">
-                            <SelectField
-                                id="vehicle-year"
-                                label="Select Year"
-                                name="vehicle_year"
-                                value={data.vehicle_year}
-                                defaultPlaceHolderValue={0}
-                                onChange={handleYearChange}
-                                options={years}
-                                placeholder="Select year"
-                                error={errors.vehicle_year}
-                            />
-                        </div>
-
-                        <div className="sm:col-span-3">
-
-                            <SelectField
-                                id="vehicle-make-id"
-                                label="Select Make"
-                                name="vehicle_make_id"
-                                value={data.vehicle_make_id}
-                                defaultPlaceHolderValue={0}
-                                onChange={handleMakeChange}
-                                options={makes}
-                                placeholder="Select Make"
-                                error={errors.vehicle_make_id}
-                            />
-                        </div>
+                        <div className="mt-6 grid grid-cols-1 sm:grid-cols-9 gap-4">
+                            {/* ================= VEHICLE DETAILS ================= */}
+                            <SectionHeader title="Vehicle Details" />
 
 
-                        <div className="sm:col-span-3">
-                            <SelectField
-                                id="vehicle-model-id"
-                                label="Select model"
-                                name="vehicle_model_id"
-                                value={data.vehicle_model_id}
-                                defaultPlaceHolderValue={0}
-                                onChange={handleModelChange}
-                                options={models}
-                                placeholder="Select model"
-                                error={errors.vehicle_model_id}
-                            />
-                        </div>
+                            <div className="sm:col-span-3">
+                                <SelectField
+                                    id="vehicle-year"
+                                    label="Select Year"
+                                    name="vehicle_year"
+                                    value={data.vehicle_year}
+                                    defaultPlaceHolderValue={0}
+                                    onChange={handleYearChange}
+                                    options={years}
+                                    placeholder="Select year"
+                                    error={errors.vehicle_year}
+                                />
+                            </div>
 
-                        <div className="sm:col-span-3">
-                            <SelectField
-                                id="vehicle-trim-id"
-                                label="Select trim"
-                                name="vehicle_trim_id"
-                                value={data.vehicle_trim_id}
-                                defaultPlaceHolderValue={0}
-                                onChange={e => handleChange("vehicle_trim_id", e.target.value)}
-                                options={trims}
-                                placeholder="Select trim"
-                                error={errors.vehicle_trim_id}
-                            />
-                        </div>
+                            <div className="sm:col-span-3">
 
-                        <div className="sm:col-span-3">
-                            <InputField
-                                id="vin"
-                                label="VIN"
-                                type="text"
-                                name="vin"
-                                value={data.vin}
-                                maxLength={20}
-                                onChange={e => handleChange("vin", e.target.value)}
-                                error={errors.vin}
-                                placeholder="17-character VIN"
-                            />
-                        </div>
+                                <SelectField
+                                    id="vehicle-make-id"
+                                    label="Select Make"
+                                    name="vehicle_make_id"
+                                    value={data.vehicle_make_id}
+                                    defaultPlaceHolderValue={0}
+                                    onChange={handleMakeChange}
+                                    options={makes}
+                                    placeholder="Select Make"
+                                    error={errors.vehicle_make_id}
+                                />
+                            </div>
 
-                        <div className="sm:col-span-3">
-                            <InputField
-                                id="plate-number"
-                                label="Plate Number"
-                                type="text"
-                                name="plate_number"
-                                value={data.plate_number}
-                                maxLength={10}
-                                onChange={e => handleChange("plate_number", e.target.value)}
-                                error={errors.plate_number}
-                                placeholder="ABC-1234"
-                            />
-                        </div>
 
-                        <div className="sm:col-span-3">
-                            <InputField
-                                id="engine-number"
-                                label="Engine Number"
-                                type="text"
-                                name="engine_number"
-                                value={data.engine_number}
-                                maxLength={20}
-                                onChange={e => handleChange("engine_number", e.target.value)}
-                                error={errors.engine_number}
-                                placeholder="Enter Engine number"
-                            />
-                        </div>
+                            <div className="sm:col-span-3">
+                                <SelectField
+                                    id="vehicle-model-id"
+                                    label="Select model"
+                                    name="vehicle_model_id"
+                                    value={data.vehicle_model_id}
+                                    defaultPlaceHolderValue={0}
+                                    onChange={handleModelChange}
+                                    options={models}
+                                    placeholder="Select model"
+                                    error={errors.vehicle_model_id}
+                                />
+                            </div>
 
-                        <div className="sm:col-span-3">
-                            <SelectField
-                                id="vehicle-specification"
-                                label="Vehicle Specification"
-                                name="vehicle_specification"
-                                value={data.vehicle_specification}
-                                onChange={e => handleChange("vehicle_specification", e.target.value)}
-                                options={specificationTypes}
-                                placeholder="Select specification"
-                                error={errors.vehicle_specification}
-                            />
-                        </div>
+                            <div className="sm:col-span-3">
+                                <SelectField
+                                    id="vehicle-trim-id"
+                                    label="Select trim"
+                                    name="vehicle_trim_id"
+                                    value={data.vehicle_trim_id}
+                                    defaultPlaceHolderValue={0}
+                                    onChange={e => handleChange("vehicle_trim_id", e.target.value)}
+                                    options={trims}
+                                    placeholder="Select trim"
+                                    error={errors.vehicle_trim_id}
+                                />
+                            </div>
 
-                        <div className="sm:col-span-3">
+                            <div className="sm:col-span-3">
+                                <InputField
+                                    id="vin"
+                                    label="VIN"
+                                    type="text"
+                                    name="vin"
+                                    value={data.vin}
+                                    maxLength={20}
+                                    onChange={e => handleChange("vin", e.target.value)}
+                                    error={errors.vin}
+                                    placeholder="17-character VIN"
+                                />
+                            </div>
 
-                            <AmountInput
-                                id="vehicle-value"
-                                label="Vehicle Value"
-                                name="vehicle_value"
-                                currency="AED"
-                                value={data.vehicle_value}
-                                onChange={e => handleChange("vehicle_value", e)}
-                                error={errors.vehicle_value}
-                            />
-                        </div>
+                            <div className="sm:col-span-3">
+                                <InputField
+                                    id="plate-number"
+                                    label="Plate Number"
+                                    type="text"
+                                    name="plate_number"
+                                    value={data.plate_number}
+                                    maxLength={10}
+                                    onChange={e => handleChange("plate_number", e.target.value)}
+                                    error={errors.plate_number}
+                                    placeholder="ABC-1234"
+                                />
+                            </div>
 
-                        {/* ================= DRIVER DETAILS ================= */}
-                        <SectionHeader title="Driver Details" />
+                            <div className="sm:col-span-3">
+                                <InputField
+                                    id="engine-number"
+                                    label="Engine Number"
+                                    type="text"
+                                    name="engine_number"
+                                    value={data.engine_number}
+                                    maxLength={20}
+                                    onChange={e => handleChange("engine_number", e.target.value)}
+                                    error={errors.engine_number}
+                                    placeholder="Enter Engine number"
+                                />
+                            </div>
 
-                        <div className="sm:col-span-3">
-                            <InputField
-                                id="first_name"
-                                label="First Name"
-                                name="first_name"
-                                maxLength={100}
-                                value={data.first_name}
-                                onChange={e => handleChange("first_name", e.target.value)}
-                                error={errors.first_name}
-                                placeholder="Enter First Name"
-                            />
-                        </div>
+                            <div className="sm:col-span-3">
+                                <SelectField
+                                    id="vehicle-specification"
+                                    label="Vehicle Specification"
+                                    name="vehicle_specification"
+                                    value={data.vehicle_specification}
+                                    onChange={e => handleChange("vehicle_specification", e.target.value)}
+                                    options={specificationTypes}
+                                    placeholder="Select specification"
+                                    error={errors.vehicle_specification}
+                                />
+                            </div>
 
-                        <div className="sm:col-span-3">
-                            <InputField
-                                id="last_name"
-                                label="Last Name"
-                                name="last_name"
-                                maxLength={100}
-                                value={data.last_name}
-                                onChange={e => handleChange("last_name", e.target.value)}
-                                error={errors.last_name}
-                                placeholder="Enter Last Name"
-                            />
-                        </div>
-                        <div className="sm:col-span-3"></div>
+                            <div className="sm:col-span-3">
 
-                        <div className="sm:col-span-3">
-                            <DateInput
-                                id="dob"
-                                label="Date of Birth"
-                                name="dob"
-                                value={data.dob}
-                                max={maxDate}
-                                onChange={e => handleChange("dob", e.target.value)}
-                                error={errors.dob}
-                            />
-                        </div>
+                                <AmountInput
+                                    id="vehicle-value"
+                                    label="Vehicle Value"
+                                    name="vehicle_value"
+                                    currency="AED"
+                                    value={data.vehicle_value}
+                                    onChange={e => handleChange("vehicle_value", e)}
+                                    error={errors.vehicle_value}
+                                />
+                            </div>
 
-                        <div className="sm:col-span-3">
-                            <InputField
-                                id="driver_license_number"
-                                label="Driver License Number"
-                                name="driver_license_number"
-                                value={data.driver_license_number}
-                                maxLength={20}
-                                onChange={e => handleChange("driver_license_number", e.target.value)}
-                                error={errors.driver_license_number}
-                                placeholder="Enter Driver License Number"
-                            />
-                        </div>
+                            {/* ================= DRIVER DETAILS ================= */}
+                            <SectionHeader title="Driver Details" />
 
-                        <div className="sm:col-span-3">
-                            <SelectField
-                                id="nationality"
-                                label="Last Nationality"
-                                name="nationality"
-                                value={data.nationality}
-                                onChange={e => handleChange("nationality", e.target.value)}
-                                options={countries}
-                                placeholder="Select nationality"
-                                error={errors.nationality}
-                            />
-                        </div>
+                            <div className="sm:col-span-3">
+                                <InputField
+                                    id="first_name"
+                                    label="First Name"
+                                    name="first_name"
+                                    maxLength={100}
+                                    value={data.first_name}
+                                    onChange={e => handleChange("first_name", e.target.value)}
+                                    error={errors.first_name}
+                                    placeholder="Enter First Name"
+                                />
+                            </div>
 
-                        <div className="sm:col-span-3">
-                            <InputField
-                                id="driving_experience"
-                                label="Driving Experience (Years)"
-                                type="number"
-                                name="driving_experience"
-                                value={data.driving_experience}
-                                onChange={e => {
-                                    let value = e.target.value
-                                    if (Number(value) < 0) value = "0"
-                                    else if (Number(value) > 50) value = "50"
+                            <div className="sm:col-span-3">
+                                <InputField
+                                    id="last_name"
+                                    label="Last Name"
+                                    name="last_name"
+                                    maxLength={100}
+                                    value={data.last_name}
+                                    onChange={e => handleChange("last_name", e.target.value)}
+                                    error={errors.last_name}
+                                    placeholder="Enter Last Name"
+                                />
+                            </div>
+                            <div className="sm:col-span-3"></div>
 
-                                    handleChange("driving_experience", value)
-                                }}
-                                error={errors.driving_experience}
-                            />
-                        </div>
+                            <div className="sm:col-span-3">
+                                <DateInput
+                                    id="dob"
+                                    label="Date of Birth"
+                                    name="dob"
+                                    value={data.dob}
+                                    max={maxDate}
+                                    onChange={e => handleChange("dob", e.target.value)}
+                                    error={errors.dob}
+                                />
+                            </div>
 
-                        {/* ================= POLICY DETAILS ================= */}
-                        <SectionHeader title="Policy Details" />
+                            <div className="sm:col-span-3">
+                                <InputField
+                                    id="driver_license_number"
+                                    label="Driver License Number"
+                                    name="driver_license_number"
+                                    value={data.driver_license_number}
+                                    maxLength={20}
+                                    onChange={e => handleChange("driver_license_number", e.target.value)}
+                                    error={errors.driver_license_number}
+                                    placeholder="Enter Driver License Number"
+                                />
+                            </div>
 
-                        <div className="sm:col-span-3">
-                            <SelectField
-                                id="registration-emirate"
-                                label="Registration Emirate"
-                                name="registration_emirate"
-                                value={data.registration_emirate}
-                                onChange={e => handleChange("registration_emirate", e.target.value)}
-                                options={emirates}
-                                placeholder="Select registration emirate"
-                                error={errors.registration_emirate}
-                            />
-                        </div>
+                            <div className="sm:col-span-3">
+                                <SelectField
+                                    id="nationality"
+                                    label="Last Nationality"
+                                    name="nationality"
+                                    value={data.nationality}
+                                    onChange={e => handleChange("nationality", e.target.value)}
+                                    options={countries}
+                                    placeholder="Select nationality"
+                                    error={errors.nationality}
+                                />
+                            </div>
 
-                        <div className="sm:col-span-3">
-                            <SelectField
-                                id="last_claim_history"
-                                label="Last Claim History"
-                                name="last_claim_history"
-                                value={data.last_claim_history}
-                                onChange={e => handleChange("last_claim_history", e.target.value)}
-                                options={claimHistories}
-                                placeholder="Select claim history"
-                                error={errors.last_claim_history}
-                            />
-                        </div>
+                            <div className="sm:col-span-3">
+                                <InputField
+                                    id="driving_experience"
+                                    label="Driving Experience (Years)"
+                                    type="number"
+                                    name="driving_experience"
+                                    value={data.driving_experience}
+                                    onChange={e => {
+                                        let value = e.target.value
+                                        if (Number(value) < 0) value = "0"
+                                        else if (Number(value) > 50) value = "50"
 
-                        <div className="sm:col-span-3">
-                            <SelectField
-                                id="policy_type"
-                                label="Policy Type"
-                                name="policy_type"
-                                value={data.policy_type}
-                                onChange={e => handleChange("policy_type", e.target.value)}
-                                options={policyTypes}
-                                placeholder="Select policy type"
-                                error={errors.policy_type}
-                            />
-                        </div>
+                                        handleChange("driving_experience", value)
+                                    }}
+                                    error={errors.driving_experience}
+                                />
+                            </div>
 
-                        <div className="sm:col-span-3">
-                            <RadioGroupInput
-                                id="policy_expired"
-                                label="Has your existing policy expired?"
-                                name="policy_expired"
-                                value={data.policy_expired}
-                                onChange={e => handleChange("policy_expired", e.target.value)}
-                                options={yesNo}
-                                inline
-                                error={errors.policy_expired}
-                            />
+                            {/* ================= POLICY DETAILS ================= */}
+                            <SectionHeader title="Policy Details" />
+
+                            <div className="sm:col-span-3">
+                                <SelectField
+                                    id="registration-emirate"
+                                    label="Registration Emirate"
+                                    name="registration_emirate"
+                                    value={data.registration_emirate}
+                                    onChange={e => handleChange("registration_emirate", e.target.value)}
+                                    options={emirates}
+                                    placeholder="Select registration emirate"
+                                    error={errors.registration_emirate}
+                                />
+                            </div>
+
+                            <div className="sm:col-span-3">
+                                <SelectField
+                                    id="last_claim_history"
+                                    label="Last Claim History"
+                                    name="last_claim_history"
+                                    value={data.last_claim_history}
+                                    onChange={e => handleChange("last_claim_history", e.target.value)}
+                                    options={claimHistories}
+                                    placeholder="Select claim history"
+                                    error={errors.last_claim_history}
+                                />
+                            </div>
+
+                            <div className="sm:col-span-3">
+                                <SelectField
+                                    id="policy_type"
+                                    label="Policy Type"
+                                    name="policy_type"
+                                    value={data.policy_type}
+                                    onChange={e => handleChange("policy_type", e.target.value)}
+                                    options={policyTypes}
+                                    placeholder="Select policy type"
+                                    error={errors.policy_type}
+                                />
+                            </div>
+
+                            <div className="sm:col-span-3">
+                                <RadioGroupInput
+                                    id="policy_expired"
+                                    label="Has your existing policy expired?"
+                                    name="policy_expired"
+                                    value={data.policy_expired}
+                                    onChange={e => handleChange("policy_expired", e.target.value)}
+                                    options={yesNo}
+                                    inline
+                                    error={errors.policy_expired}
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {/* ACTIONS */}
-                <div className="mt-6 flex justify-end">
-                    <button
-                        type="submit"
-                        disabled={isLoading}
-                        className={`inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white
+                    {/* ACTIONS */}
+                    <div className="mt-6 flex justify-end">
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className={`inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white
                         ${isLoading ? "opacity-60 cursor-not-allowed" : "hover:bg-indigo-500"}`}
-                    >
-                        {isLoading ? "Submitting..." : "Submit Insurance"}
-                    </button>
-                </div>
-            </form>
+                        >
+                            {isLoading ? "Submitting..." : "Submit Insurance"}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 };

@@ -12,6 +12,8 @@ import type { ManageUpsertCustomerUseCase } from '../../usecases/settings/Manage
 import type { keyBoolean } from '../../../infrastructure/dtos/TeamResponse'
 import type { VehiclePrerequisiteService } from '../../services/VehiclePrerequisiteService'
 import type { HealthPrerequisiteService } from '../../services/HealthPrerequisiteService'
+import { CustomerDetail } from './customerSlice'
+import type { CustomerDetailsResponse } from '../../../infrastructure/dtos/CustomerResponse'
 
 interface SettingState {
     roles: SlugName[]
@@ -192,6 +194,9 @@ const settingSlice = createSlice({
             })
             .addCase(SettingVehicleTrims.fulfilled, (state: SettingState, action: PayloadAction<SettingVehiclePrerequisitesResponse>) => {
                 state.trims = action.payload.data
+            })
+            .addCase(CustomerDetail.fulfilled, (state: SettingState, action: PayloadAction<CustomerDetailsResponse>) => {
+                state.country_codes = action.payload.data.country_codes
             })
             .addCase(SettingHealthPrerequisites.fulfilled, (state: SettingState, action: PayloadAction<SettingLeadHealthPrerequisitesResponse>) => {
                 state.insurance_fors = action.payload.data.insurance_fors

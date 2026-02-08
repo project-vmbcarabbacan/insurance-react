@@ -31,6 +31,7 @@ export const TOKENS = {
     UpsertCustomerUseCase: 'UpsertCustomerUseCase',
     SingleCustomerUseCase: 'SingleCustomerUseCase',
     CustomerDetailUseCase: 'CustomerDetailUseCase',
+    PatchCustomerUseCase: 'PatchCustomerUseCase',
 
     /* SETTINGS */
     SettingManageTeam: 'SettingManageTeam',
@@ -40,7 +41,10 @@ export const TOKENS = {
 
     /* Leads -> Vehicles */
     UpsertVehicleLeadProductUseCase: 'UpsertVehicleLeadProductUseCase',
+    ViewVehicleLeadProductUseCase: 'ViewVehicleLeadProductUseCase',
+    /* Leads -> Healths */
     UpsertHealthLeadProductUseCase: 'UpsertHealthLeadProductUseCase',
+    ViewHealthLeadProductUseCase: 'ViewHealthLeadProductUseCase',
 
 
     /***SERVICES***/

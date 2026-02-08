@@ -3,7 +3,8 @@ import { API_URL } from '../../../infrastructure/api/Urls'
 import { container } from '../../../di/container'
 import { TOKENS } from '../../../di/tokens'
 import type { LeadHealthForm } from '../../../core/interfaces/LeadHealth'
-import type { UpsertHealthLeadProductUseCase } from '../../usecases/leads/vehicles/UpsertHealthLeadProductUseCase'
+import type { UpsertHealthLeadProductUseCase } from '../../usecases/leads/healths/UpsertHealthLeadProductUseCase'
+import type { ViewHealthLeadProductUseCase } from '../../usecases/leads/healths/ViewHealthLeadProductUseCase'
 
 interface HealthState {
     status: 'idle' | 'loading' | 'ready' | 'rejected',
@@ -17,8 +18,15 @@ export const upsertHealthLeadProduct = createAsyncThunk(
     API_URL.lead.health.store,
     async (data: LeadHealthForm) => {
         const upsertHealthLead = container.resolve<UpsertHealthLeadProductUseCase>(TOKENS.UpsertHealthLeadProductUseCase)
-        console.log({ data })
         return await upsertHealthLead.execute(data);
+    }
+)
+
+export const ViewHealthLeadProduct = createAsyncThunk(
+    API_URL.lead.health.view,
+    async (uuid: string) => {
+        const viewLeadProduct = container.resolve<ViewHealthLeadProductUseCase>(TOKENS.ViewHealthLeadProductUseCase)
+        return await viewLeadProduct.execute(uuid);
     }
 )
 

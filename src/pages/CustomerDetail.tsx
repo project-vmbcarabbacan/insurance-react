@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Mail, Phone, MapPin, Globe, Calendar, Edit2, MoreHorizontal, MessageSquare, PhoneCall, Video, FileText, Pencil } from 'lucide-react';
+import { ArrowLeft, Mail, Phone, MoreHorizontal, MessageSquare, PhoneCall, Video, FileText } from 'lucide-react';
 import { Button } from '../components/Layout/ui/Button';
 import { Card } from '../components/Layout/ui/Card';
 import { Avatar } from '../components/Layout/ui/Avatar';
@@ -11,6 +11,10 @@ import { useAppDispatch, useAppSelector } from '../app/stores/hooks';
 import { CustomerDetail } from '../app/stores/slices/customerSlice';
 import ContactInfoCard from '../components/CustomerDetails/ContactInformation';
 import LeadDetails from '../components/CustomerDetails/LeadDetails';
+import { ViewVehicleLeadProduct } from '../app/stores/slices/vehicleSlice';
+import type { LeadDetail } from '../core/interfaces/Lead';
+import { ViewHealthLeadProduct } from '../app/stores/slices/healthSlice';
+import { ViewDetails } from '../components/CustomerDetails/ViewDetails';
 
 const mockActivities: Activity[] = [{
   id: '1',
@@ -45,9 +49,12 @@ export function CustomerDetails() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { customer_id } = useParams<{ customer_id: string }>();
+  const [vopen, setVopen] = useState(false);
 
   const customer = useAppSelector(state => state.customer.customer)
   const leads = useAppSelector(state => state.lead.leads)
+  const lead = useAppSelector(state => state.lead.lead)
+  const view = useAppSelector(state => state.lead.view)
 
 
   const [activeTab, setActiveTab] = useState('leads');
@@ -103,7 +110,26 @@ export function CustomerDetails() {
     // Open modal or inline edit
   };
 
+  const handleViewProudct = (lead: LeadDetail) => {
+    if (lead.product === 'vehicle') {
+      dispatch(ViewVehicleLeadProduct(lead.uuid))
+    } else if (lead.product === 'health') {
+      dispatch(ViewHealthLeadProduct(lead.uuid))
+    }
+
+    setVopen(true)
+
+  }
+
   return <div className="space-y-6">
+    {/* modals */}
+    <ViewDetails
+      open={vopen}
+      onOpenChange={setVopen}
+      lead={lead}
+      leadSections={view}
+    />
+
     {/* Header */}
     <div className="flex items-center gap-4 mb-6">
       <Button variant="ghost" size="sm" onClick={() => navigate('/customers')}>
@@ -183,7 +209,7 @@ export function CustomerDetails() {
               activeTab === 'leads' && (
                 <LeadDetails
                   leads={leads}
-                  onView={(lead) => console.log('View', lead)}
+                  onView={handleViewProudct}
                   onEdit={(lead) => console.log('Edit', lead)}
                   onDelete={(lead) => console.log('Delete', lead)}
                 />

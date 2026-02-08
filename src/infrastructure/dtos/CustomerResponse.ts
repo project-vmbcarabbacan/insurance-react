@@ -1,4 +1,5 @@
 import type { Customer, UpsertCustomer } from "../../core/interfaces/Customer"
+import type { LabelValue } from "../../core/interfaces/LabelValue"
 import type { LeadDetail } from "../../core/interfaces/Lead"
 import type { LinksResponse } from "../../infrastructure/dtos/TeamResponse"
 
@@ -23,7 +24,8 @@ export interface CustomerDetail {
     name: string
     initials: string
     contact_person: string
-    phone: string
+    phone_country_code: string
+    phone_number: string
     email: string
     status: string
     type: string
@@ -36,6 +38,7 @@ interface CustomReponse {
 interface CustomerDetails {
     customer: CustomerDetail
     leads: LeadDetail[]
+    country_codes: LabelValue[]
 }
 
 export interface CustomerResponse {

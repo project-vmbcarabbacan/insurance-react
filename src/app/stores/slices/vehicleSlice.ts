@@ -4,6 +4,7 @@ import { container } from '../../../di/container'
 import { TOKENS } from '../../../di/tokens'
 import type { UpsertVehicleLeadProductUseCase } from '../../usecases/leads/vehicles/UpsertVehicleLeadProductUseCase'
 import type { VehicleInsuranceForm } from '../../../core/interfaces/LeadVehicle'
+import type { ViewVehicleLeadProductUseCase } from '../../usecases/leads/vehicles/ViewVehicleLeadProductUseCase'
 
 interface VehicleState {
     status: 'idle' | 'loading' | 'ready' | 'rejected',
@@ -18,6 +19,14 @@ export const upsertVehicleLeadProduct = createAsyncThunk(
     async (data: VehicleInsuranceForm) => {
         const upsertVehicleLeadProduct = container.resolve<UpsertVehicleLeadProductUseCase>(TOKENS.UpsertVehicleLeadProductUseCase)
         return await upsertVehicleLeadProduct.execute(data);
+    }
+)
+
+export const ViewVehicleLeadProduct = createAsyncThunk(
+    API_URL.lead.vehicle.view,
+    async (uuid: string) => {
+        const viewLeadProduct = container.resolve<ViewVehicleLeadProductUseCase>(TOKENS.ViewVehicleLeadProductUseCase)
+        return await viewLeadProduct.execute(uuid);
     }
 )
 

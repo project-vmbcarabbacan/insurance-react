@@ -1,14 +1,15 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Customer, CustomerFilter, UpsertCustomer } from "../../../core/interfaces/Customer";
+import type { Customer, CustomerFilter, patchCustomer, UpsertCustomer } from "../../../core/interfaces/Customer";
 import { API_URL } from "../../../infrastructure/api/Urls";
 import { container } from "../../../di/container";
 import type { CustomerUseCase } from "../../usecases/customers/CustomerUseCase";
 import { TOKENS } from "../../../di/tokens";
-import type { CustomerDetail, CustomerDetailsResponse, CustomerResponse, SingleCustomerResponse } from "../../../infrastructure/dtos/CustomerResponse";
+import type { CustomerDetail as customDetail, CustomerDetailsResponse, CustomerResponse, SingleCustomerResponse } from "../../../infrastructure/dtos/CustomerResponse";
 import type { UpsertCustomerUseCase } from "../../usecases/customers/UpsertCustomerUseCase";
 import { UpsertCustomerError } from "../../errors/UpsertCustomerError";
 import type { SingleCustomerUseCase } from "../../usecases/customers/SingleCustomerUseCase";
 import type { CustomerDetailUseCase } from "../../usecases/customers/CustomerDetailUseCase";
+import type { PatchCustomerUseCase } from "../../usecases/customers/PatchCustomerUseCase";
 
 interface CustomerFormState {
     data: UpsertCustomer
@@ -20,7 +21,7 @@ interface CustomerFormState {
 interface CustomerState {
     status: 'idle' | 'loading' | 'ready'
     customers: Customer[]
-    customer: CustomerDetail
+    customer: customDetail
     current_page: number
     last_page: number
     total: number
@@ -46,7 +47,7 @@ const emptyFormData: UpsertCustomer = {
 const initialState: CustomerState = {
     status: 'idle',
     customers: [],
-    customer: {} as CustomerDetail,
+    customer: {} as customDetail,
     current_page: 1,
     last_page: 1,
     total: 1,
@@ -96,10 +97,26 @@ export const CustomerDetail = createAsyncThunk(
 )
 
 export const UpsertCustomerPost = createAsyncThunk(
-    `${API_URL.user.teams}-post-patch`,
+    `${API_URL.customer.addCustomer}-post-patch`,
     async (data: UpsertCustomer, { rejectWithValue }) => {
         try {
             const upsert = container.resolve<UpsertCustomerUseCase>(TOKENS.UpsertCustomerUseCase)
+            return await upsert.execute(data)
+        } catch (error: unknown) {
+            if (error instanceof UpsertCustomerError) {
+                return rejectWithValue(error.message || 'Something went wrong')
+            }
+
+            return rejectWithValue(error?.message);
+        }
+    }
+)
+
+export const PatchCustomer = createAsyncThunk(
+    `${API_URL.customer.patchCustomer}-patch`,
+    async (data: patchCustomer, { rejectWithValue }) => {
+        try {
+            const upsert = container.resolve<PatchCustomerUseCase>(TOKENS.PatchCustomerUseCase)
             return await upsert.execute(data)
         } catch (error: unknown) {
             if (error instanceof UpsertCustomerError) {
@@ -184,7 +201,10 @@ const customerSlice = createSlice({
         builder
             .addCase(UpsertCustomerPost.pending, handleSubmitPending)
             .addCase(UpsertCustomerPost.fulfilled, handleSubmitFulfilled)
-            .addCase(UpsertCustomerPost.rejected, handleSubmitRejected);
+            .addCase(UpsertCustomerPost.rejected, handleSubmitRejected)
+            .addCase(PatchCustomer.pending, handleSubmitPending)
+            .addCase(PatchCustomer.fulfilled, handleSubmitFulfilled)
+            .addCase(PatchCustomer.rejected, handleSubmitRejected);
 
     }
 })

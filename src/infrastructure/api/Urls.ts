@@ -16,14 +16,18 @@ export const API_URL = {
         customers: 'customers/search',
         addCustomer: 'customers/store',
         updateCustomer: 'customers/update',
+        patchCustomer: 'customers/patch',
         details: 'customers/details'
     },
     lead: {
         vehicle: {
-            store: 'lead/vehicle/store'
+            store: 'lead/vehicle/store',
+            view: 'lead/vehicle/view'
         },
         health: {
-            store: 'lead/health/store'
+            store: 'lead/health/store',
+            view: 'lead/health/view'
+
         },
     },
     setting: {

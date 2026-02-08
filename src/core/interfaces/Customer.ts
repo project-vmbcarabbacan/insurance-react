@@ -34,3 +34,5 @@ export interface UpsertCustomer {
     status?: string
     uuid?: string
 }
+
+export type patchCustomer = Partial<Pick<UpsertCustomer, 'uuid' | 'email' | 'phone_number' | 'phone_country_code'>>

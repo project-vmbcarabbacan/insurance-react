@@ -1,179 +1,119 @@
-import { Edit, MoreHorizontal, Link, CheckCircle, PauseCircle, Ban, Trash2, SquareAsterisk } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { Edit, Link, CheckCircle, PauseCircle, Ban, Trash2, SquareAsterisk } from "lucide-react";
 import { useAppDispatch } from "../../app/stores/hooks";
 import { setTeamFormField, setTeamFormPasswordField, TeamAccessed, toggInsuranceProductUuid } from "../../app/stores/slices/teamSlice";
-import type { Team, AddTeam } from "../../core/interfaces/Team";
+import type { Team } from "../../core/interfaces/Team";
 import type { TeamStatuses } from "../../core/types/Status";
+import ActionMenu from "../Layout/ui/ActionMenu";
 
-export const RowActionMenu: React.FC<{
+interface RowActionMenuProps {
     row: Team;
-    openRowId: string | null;
-    setOpenRowId: (uuid: string | null) => void;
     handleAction: (uuid: string, status: TeamStatuses) => void;
     handleMember?: () => void;
     handlePassword?: () => void;
     handleAssignProduct?: () => void;
-}> = ({
+}
+
+export const RowActionMenu: React.FC<RowActionMenuProps> = ({
     row,
-    openRowId,
-    setOpenRowId,
     handleAction,
     handleMember,
     handlePassword,
     handleAssignProduct
 }) => {
-        const dispatch = useAppDispatch();
-        const ref = useRef<HTMLButtonElement>(null);
-        const isOpen = openRowId === row.uuid;
+    const dispatch = useAppDispatch();
 
-        const [position, setPosition] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
-
-        // Close menu on outside click
-        useEffect(() => {
-            const handleClickOutside = (e: MouseEvent) => {
-                if (ref.current && !ref.current.contains(e.target as Node)) {
-                    setOpenRowId(null);
-                }
-            };
-            document.addEventListener("mousedown", handleClickOutside);
-            return () => document.removeEventListener("mousedown", handleClickOutside);
-        }, [setOpenRowId]);
-
-        // Calculate position when menu opens
-        useEffect(() => {
-            if (isOpen && ref.current) {
-                const rect = ref.current.getBoundingClientRect();
-                setPosition({
-                    top: rect.bottom + window.scrollY + 4, // small margin
-                    left: rect.right + window.scrollX - 192, // 192px width of dropdown
+    const actions = [
+        // Edit Member
+        {
+            label: "Edit",
+            icon: Edit,
+            onClick: () => {
+                Object.entries(row).forEach(([key, value]) => {
+                    const field = key === "role_name" ? "role_slug" : (key as keyof Team);
+                    const val =
+                        key === "role_name" && typeof value === "string"
+                            ? value.toLowerCase().replace(/\s+/g, "_")
+                            : String(value);
+                    dispatch(setTeamFormField({ field, value: val }));
                 });
-            }
-        }, [isOpen]);
+                handleMember?.();
+            },
+        },
 
-        // Render dropdown via portal
-        const dropdown = isOpen ? createPortal(
-            <div
-                style={{ top: position.top, left: position.left }}
-                className="fixed w-48 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded shadow-lg z-50"
-                onClick={(e) => e.stopPropagation()}
-            >
-                <button
-                    onMouseDown={() => {
-                        Object.entries(row).forEach(([key, value]) => {
-                            const field =
-                                key === "role_name" ? "role_slug" : (key as keyof AddTeam);
-                            const val =
-                                key === "role_name" && typeof value === "string"
-                                    ? value.toLowerCase().replace(/\s+/g, "_")
-                                    : String(value);
-                            dispatch(setTeamFormField({ field, value: val }));
-                        });
-                        handleMember?.();
-                        setOpenRowId(null);
-                    }}
-                    className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 text-blue-600"
-                >
-                    <Edit className="w-4 h-4" /> Edit
-                </button>
+        // Assign Product (only for Active Agents / Team Leads)
+        row.status === "Active" && ["Agent", "Team Lead"].includes(row.role_name) && {
+            label: "Assign Product",
+            icon: Link,
+            onClick: () => {
+                dispatch(TeamAccessed(row.uuid));
+                dispatch(toggInsuranceProductUuid(row.uuid));
+                handleAssignProduct?.();
+            },
+        },
 
-                {
-                    row.status === 'Active' && ['Agent', 'Team Lead'].includes(row.role_name) &&
-                    (
-                        <button
-                            onMouseDown={() => {
-                                dispatch(TeamAccessed(row.uuid))
-                                dispatch(toggInsuranceProductUuid(row.uuid))
-                                handleAssignProduct?.()
-                                setOpenRowId(null);
-                            }}
-                            className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 text-blue-600"
-                        >
-                            <Link className="w-4 h-4 text-blue-500" /> Assign Product
-                        </button>
-                    )
-                }
+        // Status actions
+        row.status !== "Active" && {
+            label: "Active",
+            icon: CheckCircle,
+            onClick: () => handleAction(row.uuid, "active"),
+            color: "green",
+        },
+        row.status !== "Inactive" && {
+            label: "Inactive",
+            icon: PauseCircle,
+            onClick: () => handleAction(row.uuid, "inactive"),
+            color: "gray",
+        },
+        row.status !== "Suspended" && {
+            label: "Suspend",
+            icon: Ban,
+            onClick: () => handleAction(row.uuid, "suspended"),
+            color: "yellow",
+        },
+        ["Inactive", "Suspended"].includes(row.status) && {
+            label: "Delete",
+            icon: Trash2,
+            onClick: () => handleAction(row.uuid, "deleted"),
+            color: "red",
+        },
 
-                {row.status !== "Active" && (
-                    <button
-                        onMouseDown={() => {
-                            handleAction(row.uuid, "active");
-                            setOpenRowId(null);
-                        }}
-                        className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 text-green-600"
-                    >
-                        <CheckCircle className="w-4 h-4 text-green-500" /> Active
-                    </button>
-                )}
+        // Update Password
+        {
+            label: "Update Password",
+            icon: SquareAsterisk,
+            onClick: () => {
+                dispatch(setTeamFormPasswordField({ field: "uuid", value: row.uuid }));
+                handlePassword?.();
+            },
+        },
+    ].filter(Boolean) as any;
 
-                {row.status !== "Inactive" && (
-                    <button
-                        onMouseDown={() => {
-                            handleAction(row.uuid, "inactive");
-                            setOpenRowId(null);
-                        }}
-                        className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-600"
-                    >
-                        <PauseCircle className="w-4 h-4 text-gray-500" /> Inactive
-                    </button>
-                )}
-
-                {row.status !== "Suspended" && (
-                    <button
-                        onMouseDown={() => {
-                            handleAction(row.uuid, "suspended");
-                            setOpenRowId(null);
-                        }}
-                        className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 text-yellow-600"
-                    >
-                        <Ban className="w-4 h-4 text-yellow-500" /> Suspend
-                    </button>
-                )}
-
-                {["Inactive", "Suspended"].includes(row.status) && (
-                    <button
-                        onMouseDown={() => {
-                            handleAction(row.uuid, "deleted");
-                            setOpenRowId(null);
-                        }}
-                        className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 text-red-600"
-                    >
-                        <Trash2 className="w-4 h-4 text-red-500" /> Delete
-                    </button>
-                )}
-
-                <button
-                    onMouseDown={() => {
-                        dispatch(
-                            setTeamFormPasswordField({
-                                field: "uuid",
-                                value: row.uuid,
-                            })
-                        );
-                        handlePassword?.();
-                        setOpenRowId(null);
-                    }}
-                    className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 text-blue-600"
-                >
-                    <SquareAsterisk className="w-4 h-4 text-blue-500" /> Update Password
-                </button>
-            </div>,
-            document.body
-        ) : null;
-
-        return (
-            <div className="relative text-right">
+    return (
+        <ActionMenu
+            trigger={({ ref, onClick, ...aria }) => (
                 <button
                     ref={ref}
+                    onClick={onClick}
+                    {...aria}
                     className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setOpenRowId(isOpen ? null : row.uuid);
-                    }}
                 >
-                    <MoreHorizontal className="w-5 h-5 text-gray-500" />
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-5 h-5 text-gray-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 12h.01M12 12h.01M18 12h.01"
+                        />
+                    </svg>
                 </button>
-                {dropdown}
-            </div>
-        );
-    };
+            )}
+            actions={actions}
+        />
+    );
+};

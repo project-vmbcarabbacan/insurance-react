@@ -44,14 +44,14 @@ export class AxiosApiService implements ApiService {
     // -----------------------------
     private normalizeError(error: unknown): ApiError {
         if (axios.isAxiosError(error)) {
-            // if (error.response?.status === 401) {
-            //     window.location.href = "/login";
-            //     return new ApiError(
-            //         'Unauthorized',
-            //         401,
-            //         error.code
-            //     )
-            // }
+            if (error.response?.status === 401) {
+                window.location.href = "/login";
+                return new ApiError(
+                    'Unauthorized',
+                    401,
+                    error.code
+                )
+            }
             return new ApiError(
                 error.response?.data?.message || 'Request failed',
                 error.response?.status,

@@ -1,137 +1,90 @@
-import { Edit, Car, HeartPlus, Home, Plane, PawPrint, MoreHorizontal, View } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { Edit, Car, HeartPlus, Home, Plane, PawPrint, View } from "lucide-react";
+import { useSelector } from "react-redux";
 import type { Customer } from "../../core/interfaces/Customer";
 import { SelectProducts } from "../../app/stores/selectors/settingSelectors";
-import { useSelector } from "react-redux";
+import ActionMenu from "../Layout/ui/ActionMenu";
 
-export const CustomerRowAction: React.FC<{
+interface CustomerRowActionProps {
     row: Customer;
-    openRowId: string | null;
-    setOpenRowId: (uuid: string | null) => void;
     handleEdit?: (uuid: string) => void;
     handleView?: (uuid: string) => void;
     handleAdd?: (uuid: string, product: string) => void;
-}> = ({
+}
+
+export const CustomerRowAction: React.FC<CustomerRowActionProps> = ({
     row,
-    openRowId,
-    setOpenRowId,
     handleEdit,
     handleView,
     handleAdd,
 }) => {
-        const products = useSelector(SelectProducts);
+    const products = useSelector(SelectProducts);
 
-        const ref = useRef<HTMLButtonElement>(null);
-        const isOpen = openRowId === row.uuid;
-
-        const [position, setPosition] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
-
-        // Close menu on outside click
-        useEffect(() => {
-            const handleClickOutside = (e: MouseEvent) => {
-                if (ref.current && !ref.current.contains(e.target as Node)) {
-                    setOpenRowId(null);
-                }
-            };
-            document.addEventListener("mousedown", handleClickOutside);
-            return () => document.removeEventListener("mousedown", handleClickOutside);
-        }, [setOpenRowId]);
-
-        // Calculate position when menu opens
-        useEffect(() => {
-            if (isOpen && ref.current) {
-                const rect = ref.current.getBoundingClientRect();
-                setPosition({
-                    top: rect.bottom - 100, // small margin
-                    left: rect.right + window.scrollX - 220, // 192px width of dropdown
-                });
+    const actions = [
+        handleView && {
+            label: "View Customer",
+            icon: View,
+            onClick: () => handleView(row.uuid),
+        },
+        handleEdit && {
+            label: "Edit Customer",
+            icon: Edit,
+            onClick: () => handleEdit(row.uuid),
+        },
+        ...products.map(product => {
+            let Icon: React.ElementType;
+            switch (product.value) {
+                case "health":
+                    Icon = HeartPlus;
+                    break;
+                case "home":
+                    Icon = Home;
+                    break;
+                case "travel":
+                    Icon = Plane;
+                    break;
+                case "pet":
+                    Icon = PawPrint;
+                    break;
+                case "vehicle":
+                default:
+                    Icon = Car;
+                    break;
             }
-        }, [isOpen]);
 
-        // Render dropdown via portal
-        const dropdown = isOpen ? createPortal(
-            <div
-                style={{ top: position.top, left: position.left }}
-                className="fixed w-48 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded shadow-lg z-50"
-                onClick={(e) => e.stopPropagation()}
-            >
-                <button
-                    onMouseDown={() => {
-                        handleView?.(row.uuid);
-                        setOpenRowId(null);
-                    }}
-                    className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 text-blue-600"
-                >
-                    <View className="w-4 h-4" /> View Customer
-                </button>
-                <button
-                    onMouseDown={() => {
-                        handleEdit?.(row.uuid);
-                        setOpenRowId(null);
-                    }}
-                    className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 text-blue-600"
-                >
-                    <Edit className="w-4 h-4" /> Edit Customer
-                </button>
+            return {
+                label: `Add ${product.label}`,
+                icon: Icon,
+                onClick: () => handleAdd?.(row.uuid, String(product.value)),
+            };
+        }),
+    ].filter(Boolean) as any;
 
-                {/* Products */}
-                {
-                    products.map(product => {
-                        let Icon: React.ElementType;
-
-                        switch (product.value) {
-                            case "health":
-                                Icon = HeartPlus;
-                                break;
-                            case "home":
-                                Icon = Home;
-                                break;
-                            case "travel":
-                                Icon = Plane;
-                                break;
-                            case "pet":
-                                Icon = PawPrint;
-                                break;
-                            case "vehicle":
-                            default:
-                                Icon = Car;
-                                break;
-                        }
-
-                        return (
-
-                            <button
-                                onMouseDown={() => {
-                                    handleAdd?.(row.uuid, String(product.value));
-                                    setOpenRowId(null);
-                                }}
-                                className="flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 text-blue-600"
-                            >
-                                {/* HeartPlus, Home, Plane, PawPrint */}
-                                <Icon className="w-4 h-4" /> Add {product.label}
-                            </button>
-                        )
-                    })
-                }
-
-            </div>,
-            document.body
-        ) : null;
-
-        return (
-            <div className="relative text-right">
+    return (
+        <ActionMenu
+            trigger={({ ref, onClick, ...aria }) => (
                 <button
                     ref={ref}
+                    onClick={onClick}
+                    {...aria}
                     className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setOpenRowId(isOpen ? null : row.uuid);
-                    }}
                 >
-                    <MoreHorizontal className="w-5 h-5 text-gray-500" />
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-5 h-5 text-gray-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 12h.01M12 12h.01M18 12h.01"
+                        />
+                    </svg>
                 </button>
-                {dropdown}
-            </div>
-        );
-    };
+            )}
+            actions={actions}
+        />
+    );
+};

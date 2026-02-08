@@ -11,8 +11,10 @@ interface PhoneNumberInputProps {
     countryOptions: LabelValue[];
     onCountryChange: (value: string) => void;
     onPhoneChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
     error?: string;
     className?: string;
+    showLabel?: boolean;
 }
 
 const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
@@ -24,8 +26,11 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
     countryOptions,
     onCountryChange,
     onPhoneChange,
+    onKeyDown,
     error,
     className = "",
+    showLabel = true
+
 }) => {
     // react-select expects { value, label } objects
     const options = countryOptions.map(opt => ({
@@ -37,9 +42,14 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
 
     return (
         <div className="mb-4">
-            <label htmlFor={id} className="block text-sm/6 font-medium text-gray-900">
-                {label}
-            </label>
+            {
+                showLabel &&
+                (
+                    <label htmlFor={id} className="block text-sm/6 font-medium text-gray-900">
+                        {label}
+                    </label>
+                )
+            }
 
             <div className="mt-2 flex shadow-sm">
                 {/* Searchable Country Code Select */}
@@ -90,6 +100,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
                         ${error ? "focus:outline-red-600" : "focus:outline-indigo-600"}
                         ${className}
                     `}
+                    onKeyDown={onKeyDown}
                 />
             </div>
 
