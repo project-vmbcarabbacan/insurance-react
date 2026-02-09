@@ -38,6 +38,7 @@ export const TOKENS = {
     InsuranceProductUseCase: 'InsuranceProductUseCase',
     ManageCustomerUseCase: 'ManageCustomerUseCase',
     ManageUpsertCustomerUseCase: 'ManageUpsertCustomerUseCase',
+    ManageCustomerDetailUseCase: 'ManageCustomerDetailUseCase',
 
     /* Leads -> Vehicles */
     UpsertVehicleLeadProductUseCase: 'UpsertVehicleLeadProductUseCase',

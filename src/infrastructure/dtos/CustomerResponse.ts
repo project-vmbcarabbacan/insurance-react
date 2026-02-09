@@ -38,7 +38,6 @@ interface CustomReponse {
 interface CustomerDetails {
     customer: CustomerDetail
     leads: LeadDetail[]
-    country_codes: LabelValue[]
 }
 
 export interface CustomerResponse {

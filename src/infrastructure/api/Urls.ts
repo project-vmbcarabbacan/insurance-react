@@ -37,6 +37,7 @@ export const API_URL = {
         manageCustomers: 'setting/manage/customers',
         insuranceProduct: 'setting/insurance/product',
         upsertCustomer: 'setting/customer/upsert',
+        detailCustomer: 'setting/customer/details',
         vehicle: {
             prerequisites: 'setting/vehicle/prerequisites',
             make: 'setting/vehicle/make',

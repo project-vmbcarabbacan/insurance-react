@@ -4,7 +4,7 @@ import { API_URL } from '../../../infrastructure/api/Urls'
 import { ManageTeamUseCase } from '../../usecases/settings/ManageTeamUseCase'
 import { TOKENS } from '../../../di/tokens'
 import { container } from '../../../di/container'
-import type { SettingInsuranceProductResponse, SettingLeadHealthPrerequisitesResponse, SettingLeadVehiclePrerequisitesResponse, SettingManageCustomerResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse, SettingVehiclePrerequisitesResponse } from '../../../infrastructure/dtos/SettingResponse'
+import type { SettingDetailCustomerResponse, SettingInsuranceProductResponse, SettingLeadHealthPrerequisitesResponse, SettingLeadVehiclePrerequisitesResponse, SettingManageCustomerResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse, SettingVehiclePrerequisitesResponse } from '../../../infrastructure/dtos/SettingResponse'
 import type { LabelValue } from '../../../core/interfaces/LabelValue'
 import type { InsuranceProductUseCase } from '../../usecases/settings/InsuranceProductUseCase'
 import type { ManageCustomerUseCase } from '../../usecases/settings/ManageCustomerUseCase'
@@ -14,6 +14,7 @@ import type { VehiclePrerequisiteService } from '../../services/VehiclePrerequis
 import type { HealthPrerequisiteService } from '../../services/HealthPrerequisiteService'
 import { CustomerDetail } from './customerSlice'
 import type { CustomerDetailsResponse } from '../../../infrastructure/dtos/CustomerResponse'
+import type { ManageCustomerDetailUseCase } from '../../usecases/settings/ManageCustomerDetailUseCase'
 
 interface SettingState {
     roles: SlugName[]
@@ -104,6 +105,14 @@ export const SettingUpsertCustomer = createAsyncThunk(
     }
 )
 
+export const ManageCustomerDetail = createAsyncThunk(
+    API_URL.setting.detailCustomer,
+    async () => {
+        const setting = container.resolve<ManageCustomerDetailUseCase>(TOKENS.ManageCustomerDetailUseCase)
+        return setting.execute()
+    }
+)
+
 /* Vehicle */
 export const SettingVehiclePrerequisites = createAsyncThunk(
     API_URL.setting.vehicle.prerequisites,
@@ -177,6 +186,10 @@ const settingSlice = createSlice({
                 state.country_codes = action.payload.data.country_codes
                 state.accessed = action.payload.data.accessed
             })
+            .addCase(ManageCustomerDetail.fulfilled, (state: SettingState, action: PayloadAction<SettingDetailCustomerResponse>) => {
+                state.insurance_products = action.payload.data.products
+                state.country_codes = action.payload.data.country_codes
+            })
             .addCase(SettingVehiclePrerequisites.fulfilled, (state: SettingState, action: PayloadAction<SettingLeadVehiclePrerequisitesResponse>) => {
                 state.years = action.payload.data.years
                 state.claim_histories = action.payload.data.claim_histories
@@ -194,9 +207,6 @@ const settingSlice = createSlice({
             })
             .addCase(SettingVehicleTrims.fulfilled, (state: SettingState, action: PayloadAction<SettingVehiclePrerequisitesResponse>) => {
                 state.trims = action.payload.data
-            })
-            .addCase(CustomerDetail.fulfilled, (state: SettingState, action: PayloadAction<CustomerDetailsResponse>) => {
-                state.country_codes = action.payload.data.country_codes
             })
             .addCase(SettingHealthPrerequisites.fulfilled, (state: SettingState, action: PayloadAction<SettingLeadHealthPrerequisitesResponse>) => {
                 state.insurance_fors = action.payload.data.insurance_fors

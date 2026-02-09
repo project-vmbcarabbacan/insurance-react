@@ -36,6 +36,7 @@ import { ManageTeamUseCase } from "../app/usecases/settings/ManageTeamUseCase.ts
 import { InsuranceProductUseCase } from "../app/usecases/settings/InsuranceProductUseCase.ts";
 import { ManageCustomerUseCase } from "../app/usecases/settings/ManageCustomerUseCase.ts";
 import { ManageUpsertCustomerUseCase } from "../app/usecases/settings/ManageUpsertCustomerUseCase.ts";
+import { ManageCustomerDetailUseCase } from "../app/usecases/settings/ManageCustomerDetailUseCase.ts";
 /* leads -> vehicles */
 import { UpsertVehicleLeadProductUseCase } from "../app/usecases/leads/vehicles/UpsertVehicleLeadProductUseCase.ts";
 import { ViewVehicleLeadProductUseCase } from "../app/usecases/leads/vehicles/ViewVehicleLeadProductUseCase.ts";
@@ -95,6 +96,7 @@ export function setup() {
     const insuranceProductUseCase = new InsuranceProductUseCase(settingRepository)
     const manageCustomerUseCase = new ManageCustomerUseCase(settingRepository)
     const manageUpsertCustomerUseCase = new ManageUpsertCustomerUseCase(settingRepository)
+    const manageCustomerDetailUseCase = new ManageCustomerDetailUseCase(settingRepository)
 
     /* lead -> vehicles */
     const upsertVehicleLeadProductUseCase = new UpsertVehicleLeadProductUseCase(vehicleRepository)
@@ -154,6 +156,7 @@ export function setup() {
     container.register(TOKENS.InsuranceProductUseCase, insuranceProductUseCase)
     container.register(TOKENS.ManageCustomerUseCase, manageCustomerUseCase)
     container.register(TOKENS.ManageUpsertCustomerUseCase, manageUpsertCustomerUseCase)
+    container.register(TOKENS.ManageCustomerDetailUseCase, manageCustomerDetailUseCase)
 
     /* leads -> vehicles */
     container.register(TOKENS.UpsertVehicleLeadProductUseCase, upsertVehicleLeadProductUseCase)

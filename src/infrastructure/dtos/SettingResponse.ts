@@ -26,6 +26,11 @@ interface upsertCustomerResponse {
     accessed: keyBoolean
 }
 
+interface detailsCustomerResponse {
+    country_codes: LabelValue[]
+    products: LabelValue[]
+}
+
 export type leadVehicleResponse = {
     claim_histories: LabelValue[]
     policy_types: LabelValue[]
@@ -67,6 +72,11 @@ export type SettingInsuranceProductResponse = {
 
 export type SettingUpsertCustomerResponse = {
     data: upsertCustomerResponse
+    message: string
+}
+
+export type SettingDetailCustomerResponse = {
+    data: detailsCustomerResponse
     message: string
 }
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Mail, Phone, MoreHorizontal, MessageSquare, PhoneCall, Video, FileText } from 'lucide-react';
+import { Mail, Phone, MoreHorizontal, MessageSquare, PhoneCall, Video, FileText } from 'lucide-react';
 import { Button } from '../components/Layout/ui/Button';
 import { Card } from '../components/Layout/ui/Card';
 import { Avatar } from '../components/Layout/ui/Avatar';
@@ -16,6 +16,8 @@ import type { LeadDetail } from '../core/interfaces/Lead';
 import { ViewHealthLeadProduct } from '../app/stores/slices/healthSlice';
 import { ViewDetails } from '../components/CustomerDetails/ViewDetails';
 import GoBack from '../components/Layout/ui/GoBack';
+import { ManageCustomerDetail } from '../app/stores/slices/settingSlice';
+import { CustomerProductAction } from '../components/CustomerDetails/CustomerProductAction';
 
 const mockActivities: Activity[] = [{
   id: '1',
@@ -104,12 +106,11 @@ export function CustomerDetails() {
     dispatch(CustomerDetail(String(customer_id)))
   }, [customer_id, dispatch])
 
-  if (!customer_id) return null;
+  useEffect(() => {
+    dispatch(ManageCustomerDetail())
+  }, [dispatch])
 
-  const handleEdit = (field: string) => {
-    console.log("Edit field:", field);
-    // Open modal or inline edit
-  };
+  if (!customer_id) return null;
 
   const handleViewProudct = (lead: LeadDetail) => {
     if (lead.product === 'vehicle') {
@@ -123,6 +124,10 @@ export function CustomerDetails() {
 
   const handleEditProduct = (lead: LeadDetail) => {
     navigate(`/leads/${lead.product}/update/${customer_id}/${lead.uuid}`)
+  }
+
+  const HandleAddLead = (uuid: string, product: string) => {
+    navigate(`/leads/${product}/create/${uuid}`)
   }
 
   return <div className="space-y-6">
@@ -141,11 +146,6 @@ export function CustomerDetails() {
       {/* Left Column: Profile */}
       <div className="space-y-6">
         <Card className="text-center">
-          <div className="flex justify-end mb-2">
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              <MoreHorizontal className="w-4 h-4" />
-            </Button>
-          </div>
           <div className="flex flex-col items-center">
             <Avatar fallback={customer.initials} size="lg" className="w-24 h-24 text-2xl mb-4" />
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">
@@ -169,7 +169,7 @@ export function CustomerDetails() {
                 variant="secondary"
                 className="flex-1"
                 leftIcon={<Phone className="w-4 h-4" />}
-                onClick={() => (window.location.href = `tel:${customer.phone}`)}
+                onClick={() => (window.location.href = `tel:${customer.phone_country_code}${customer.phone_number}`)}
               >
                 Call
               </Button>
@@ -189,19 +189,27 @@ export function CustomerDetails() {
       <div className="lg:col-span-2 space-y-6">
         <Card noPadding className="overflow-hidden">
           <div className="px-6 pt-2">
-            <Tabs tabs={[{
-              id: 'leads',
-              label: 'Leads'
-            }, {
-              id: 'activity',
-              label: 'Activity'
-            }, {
-              id: 'notes',
-              label: 'Notes'
-            }, {
-              id: 'deals',
-              label: 'Deals'
-            }]} activeTab={activeTab} onChange={setActiveTab} />
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <Tabs
+                  tabs={[
+                    { id: 'leads', label: 'Leads' },
+                    { id: 'activity', label: 'Activity' },
+                    { id: 'notes', label: 'Notes' },
+                    { id: 'deals', label: 'Deals' }
+                  ]}
+                  activeTab={activeTab}
+                  onChange={setActiveTab}
+                />
+              </div>
+              <CustomerProductAction
+                row={customer}
+                handleAdd={HandleAddLead}
+              />
+              {/* <Button variant="ghost" size="sm" className="h-8 w-8 p-0 ml-2">
+                <MoreHorizontal className="w-4 h-4" />
+              </Button> */}
+            </div>
           </div>
 
           <div className="p-6">
