@@ -22,11 +22,13 @@ export const API_URL = {
     lead: {
         vehicle: {
             store: 'lead/vehicle/store',
-            view: 'lead/vehicle/view'
+            view: 'lead/vehicle/view',
+            find: 'lead/vehicle/find'
         },
         health: {
             store: 'lead/health/store',
-            view: 'lead/health/view'
+            view: 'lead/health/view',
+            find: 'lead/health/find'
 
         },
     },

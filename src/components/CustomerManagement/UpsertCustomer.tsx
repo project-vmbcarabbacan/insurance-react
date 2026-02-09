@@ -66,7 +66,7 @@ export const UpsertCustomer: React.FC<{
 
         if (allFalse && !data.uuid) setAccecessedError(true);
 
-        if (Object.keys(validationErrors).length > 0 || allFalse) {
+        if (Object.keys(validationErrors).length > 0 || (!data.uuid && allFalse)) {
             dispatch(setCustomerFormErrors(validationErrors));
             return;
         }

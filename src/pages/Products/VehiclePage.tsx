@@ -8,12 +8,12 @@ import { SelectClaimHistories, SelectCountries, SelectEmirates, SelectMakes, Sel
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../app/stores/hooks";
 import { SettingVehicleMakes, SettingVehicleModels, SettingVehiclePrerequisites, SettingVehicleTrims } from "../../app/stores/slices/settingSlice";
-import type { VehicleInsuranceForm } from "../../core/interfaces/LeadVehicle";
+import type { LeadVehicleForm } from "../../core/interfaces/LeadVehicle";
 import { validateLeadVehicleForm } from "../../core/validations/validateLeadVehicleForm";
 import AmountInput from "../../components/Layout/ui/Amount";
-import { upsertVehicleLeadProduct } from "../../app/stores/slices/vehicleSlice";
-import { Button } from "../../components/Layout/ui/Button";
-import { ArrowLeft } from "lucide-react";
+import { FindVehicleLeadProduct, upsertVehicleLeadProduct } from "../../app/stores/slices/vehicleSlice";
+
+import GoBack from "../../components/Layout/ui/GoBack";
 
 const SectionHeader = ({ title }: { title: string }) => (
     <div className="sm:col-span-9 mt-8">
@@ -38,11 +38,11 @@ export const VehicleInsurancePage = () => {
 
     const dispatch = useAppDispatch();
 
-    const { customer_id } = useParams<{ customer_id: string }>();
+    const { customer_id, lead_id } = useParams<{ customer_id: string, lead_id: string }>();
     const navigate = useNavigate();
 
     /* ------------------------ Local State ------------------------ */
-    const [data, setData] = useState<VehicleInsuranceForm>({
+    const [data, setData] = useState<LeadVehicleForm>({
         vehicle_make_id: 0,
         vehicle_year: 0,
         vehicle_model_id: 0,
@@ -69,10 +69,10 @@ export const VehicleInsurancePage = () => {
         utm_medium: 'organic'
     });
 
-    const [errors, setErrors] = useState<Partial<Record<keyof VehicleInsuranceForm, string>>>({});
+    const [errors, setErrors] = useState<Partial<Record<keyof LeadVehicleForm, string>>>({});
     const [isLoading, setIsLoading] = useState(false);
 
-    /* ------------------------ Check customer_id ------------------------ */
+    /* ------------------------ useEffect ------------------------ */
     useEffect(() => {
         if (!customer_id) {
             // Redirect and **return early**, do NOT call setState
@@ -82,14 +82,73 @@ export const VehicleInsurancePage = () => {
 
     }, [customer_id, navigate]);
 
+
     useEffect(() => {
         dispatch(SettingVehiclePrerequisites())
     }, [dispatch])
 
+    useEffect(() => {
+
+        const fetchData = async () => {
+            try {
+                const payload = await dispatch(
+                    FindVehicleLeadProduct({ lead_uuid: String(lead_id) })
+                ).unwrap();
+
+                setData(prev => ({
+                    ...prev,
+                    ...(payload.data.lead as Partial<LeadVehicleForm>),
+                }));
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchData();
+    }, [lead_id, dispatch]);
+
+    useEffect(() => {
+        if (!data.vehicle_year) return;
+
+        dispatch(
+            SettingVehicleMakes({
+                year: data.vehicle_year
+            })
+        );
+    }, [data.vehicle_year, dispatch]);
+
+
+    useEffect(() => {
+        if (!data.vehicle_year && !data.vehicle_make_id) return;
+
+        dispatch(
+            SettingVehicleModels({
+                year: data.vehicle_year,
+                make_id: data.vehicle_make_id
+            })
+        )
+
+    }, [data.vehicle_year, data.vehicle_make_id, dispatch]);
+
+    useEffect(() => {
+        if (!data.vehicle_year && !data.vehicle_make_id && !data.vehicle_model_id) return;
+
+
+        dispatch(
+            SettingVehicleTrims({
+                year: data.vehicle_year,
+                make_id: data.vehicle_make_id,
+                model_id: data.vehicle_model_id
+            }))
+
+
+    }, [data.vehicle_year, data.vehicle_make_id, data.vehicle_model_id, dispatch]);
+
+
     if (!customer_id) return null;
 
     /* ------------------------ Handlers ------------------------ */
-    const handleChange = (field: keyof VehicleInsuranceForm, value: string | number) => {
+    const handleChange = (field: keyof LeadVehicleForm, value: string | number) => {
         setData(prev => ({ ...prev, [field]: value }));
         setErrors(prev => ({ ...prev, [field]: undefined }));
     };
@@ -114,24 +173,19 @@ export const VehicleInsurancePage = () => {
 
         await dispatch(upsertVehicleLeadProduct(payload))
         setIsLoading(false)
-        navigate('/customers')
+        navigate(`/customer/${customer_id}`)
     };
-
-
 
     const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         handleChange('vehicle_year', Number(e.target.value))
-        dispatch(SettingVehicleMakes({ year: Number(e.target.value) }))
     };
 
     const handleMakeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         handleChange('vehicle_make_id', Number(e.target.value))
-        dispatch(SettingVehicleModels({ year: data.vehicle_year, make_id: Number(e.target.value) }))
     };
 
     const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         handleChange('vehicle_model_id', Number(e.target.value))
-        dispatch(SettingVehicleTrims({ year: data.vehicle_year, make_id: data.vehicle_make_id, model_id: Number(e.target.value) }))
     };
 
     const today = new Date();
@@ -141,11 +195,7 @@ export const VehicleInsurancePage = () => {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center gap-4 mb-6">
-                <Button variant="ghost" size="sm" onClick={() => navigate('/customers')}>
-                    <ArrowLeft className="w-4 h-4 mr-1" /> Back
-                </Button>
-            </div>
+            <GoBack />
 
             <div className="max-w-6xl mx-auto px-4 py-6">
                 <form onSubmit={handleSubmit}>

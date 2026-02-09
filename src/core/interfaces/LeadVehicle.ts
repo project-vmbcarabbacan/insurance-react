@@ -1,4 +1,4 @@
-export type VehicleInsuranceForm = {
+export type LeadVehicleForm = {
 
     vehicle_make_id: number;
     vehicle_year: number;

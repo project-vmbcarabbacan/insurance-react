@@ -42,7 +42,9 @@ function App() {
         <Route path="customer/:customer_id" element={<CustomerDetails />} />
         <Route path="teams" element={<ManageTeam />} />
         <Route path="leads/vehicle/create/:customer_id" element={<VehicleInsurancePage />} />
+        <Route path="leads/vehicle/update/:customer_id/:lead_id" element={<VehicleInsurancePage />} />
         <Route path="leads/health/create/:customer_id" element={<HealthInsurancePage />} />
+        <Route path="leads/health/update/:customer_id/:lead_id" element={<HealthInsurancePage />} />
       </Route>
 
     </Routes>

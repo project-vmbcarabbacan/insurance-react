@@ -2,7 +2,7 @@ import type { LeadHealthForm } from "../../core/interfaces/LeadHealth";
 import type { HealthLeadContract } from "../../domain/contracts/HealthLeadContract";
 import type { ApiService } from "../api/ApiService";
 import { API_URL } from "../api/Urls";
-import type { LeadMessageResponse, LeadViewResponse } from "../dtos/LeadResponse";
+import type { LeadFindResponse, LeadMessageResponse, LeadViewResponse } from "../dtos/LeadResponse";
 
 export class HealthRepository implements HealthLeadContract {
 
@@ -14,5 +14,9 @@ export class HealthRepository implements HealthLeadContract {
 
     async viewHealthLead(uuid: string): Promise<LeadViewResponse> {
         return await this.api.get<LeadViewResponse>(`/${API_URL.lead.health.view}/${uuid}`);
+    }
+
+    async findHealthLead(lead_uuid: string): Promise<LeadFindResponse> {
+        return await this.api.get<LeadFindResponse>(`/${API_URL.lead.health.find}/${lead_uuid}`);
     }
 }

@@ -5,6 +5,7 @@ import { TOKENS } from '../../../di/tokens'
 import type { LeadHealthForm } from '../../../core/interfaces/LeadHealth'
 import type { UpsertHealthLeadProductUseCase } from '../../usecases/leads/healths/UpsertHealthLeadProductUseCase'
 import type { ViewHealthLeadProductUseCase } from '../../usecases/leads/healths/ViewHealthLeadProductUseCase'
+import type { FindHealthLeadProductUseCase } from '../../usecases/leads/healths/FindHealthLeadProductUseCase'
 
 interface HealthState {
     status: 'idle' | 'loading' | 'ready' | 'rejected',
@@ -27,6 +28,14 @@ export const ViewHealthLeadProduct = createAsyncThunk(
     async (uuid: string) => {
         const viewLeadProduct = container.resolve<ViewHealthLeadProductUseCase>(TOKENS.ViewHealthLeadProductUseCase)
         return await viewLeadProduct.execute(uuid);
+    }
+)
+
+export const FindHealthLeadProduct = createAsyncThunk(
+    API_URL.lead.health.find,
+    async (data: { lead_uuid: string }) => {
+        const findLeadProduct = container.resolve<FindHealthLeadProductUseCase>(TOKENS.FindHealthLeadProductUseCase)
+        return await findLeadProduct.execute(data.lead_uuid);
     }
 )
 

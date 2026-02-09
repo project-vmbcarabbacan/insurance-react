@@ -26,9 +26,9 @@ import RadioGroupInput from "../../components/Layout/ui/RadioGroup";
 import SelectField from "../../components/Layout/ui/Select";
 import DateInput from "../../components/Layout/ui/Date";
 import InputField from "../../components/Layout/ui/Input";
-import { ArrowLeft, TrashIcon } from "lucide-react";
-import { upsertHealthLeadProduct } from "../../app/stores/slices/healthSlice";
-import { Button } from "../../components/Layout/ui/Button";
+import { FindHealthLeadProduct, upsertHealthLeadProduct } from "../../app/stores/slices/healthSlice";
+import GoBack from "../../components/Layout/ui/GoBack";
+import { TrashIcon } from "lucide-react";
 
 const SectionHeader = ({ title }: { title: string }) => (
     <div className="sm:col-span-9 mt-8">
@@ -49,7 +49,7 @@ const SectionMemberHeader = ({ title }: { title: string }) => (
 export const HealthInsurancePage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const { customer_id } = useParams<{ customer_id: string }>();
+    const { customer_id, lead_id } = useParams<{ customer_id: string, lead_id: string }>();
 
     const insuranceFors = useSelector(SelectInsuranceFors);
     const insureTos = useSelector(SelectInsureTos);
@@ -63,6 +63,7 @@ export const HealthInsurancePage = () => {
     const maritalStatuses = useSelector(SelectMaritalStatuses);
     const genders = useSelector(SelectGenders);
 
+    /* ------------------------ Local State ------------------------ */
     const initialFormState: LeadHealthForm = {
         insurance_for: "",
         insure_to: "",
@@ -93,6 +94,7 @@ export const HealthInsurancePage = () => {
         mother: "female"
     };
 
+    /* ------------------------ useEffect ------------------------ */
     useEffect(() => {
         if (!customer_id) {
             navigate("/customers", { replace: true });
@@ -101,9 +103,29 @@ export const HealthInsurancePage = () => {
         dispatch(SettingHealthPrerequisites());
     }, [customer_id, dispatch, navigate]);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const payload = await dispatch(
+                    FindHealthLeadProduct({ lead_uuid: String(lead_id) })
+                ).unwrap();
+
+                setData(prev => ({
+                    ...prev,
+                    ...(payload.data.lead as Partial<LeadHealthForm>),
+                }));
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchData();
+    }, [lead_id, dispatch]);
+
     if (!customer_id) return null;
 
 
+    /* ------------------------ Handlers ------------------------ */
     const handleChange = (field: keyof LeadHealthForm, value: any) => {
         if (field === "insurance_for") {
             setData(prev => ({
@@ -244,7 +266,7 @@ export const HealthInsurancePage = () => {
         setIsLoading(true);
         await dispatch(upsertHealthLeadProduct(payload));
         setIsLoading(false);
-        navigate("/customers");
+        navigate(`/customer/${customer_id}`);
     };
 
     const maxDate = new Date(
@@ -262,11 +284,7 @@ export const HealthInsurancePage = () => {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center gap-4 mb-6">
-                <Button variant="ghost" size="sm" onClick={() => navigate('/customers')}>
-                    <ArrowLeft className="w-4 h-4 mr-1" /> Back
-                </Button>
-            </div>
+            <GoBack />
 
             <div className="max-w-6xl mx-auto px-4 py-6">
                 <form onSubmit={handleSubmit}>
@@ -284,6 +302,7 @@ export const HealthInsurancePage = () => {
                                 }
                                 error={errors.insurance_for}
                                 inline
+                                disabled={lead_id}
                             />
                         </div>
 

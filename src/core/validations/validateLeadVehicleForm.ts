@@ -1,7 +1,7 @@
-import type { VehicleInsuranceForm } from "../interfaces/LeadVehicle";
+import type { LeadVehicleForm } from "../interfaces/LeadVehicle";
 
-export const validateLeadVehicleForm = (data: VehicleInsuranceForm) => {
-    const errors: Partial<Record<keyof VehicleInsuranceForm, string>> = {};
+export const validateLeadVehicleForm = (data: LeadVehicleForm) => {
+    const errors: Partial<Record<keyof LeadVehicleForm, string>> = {};
 
     if (!data.vehicle_make_id) errors.vehicle_make_id = 'Vehicle make is required';
     if (!data.vehicle_year) errors.vehicle_year = 'Vehicle year is required';

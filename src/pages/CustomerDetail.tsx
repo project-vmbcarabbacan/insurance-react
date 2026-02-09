@@ -15,6 +15,7 @@ import { ViewVehicleLeadProduct } from '../app/stores/slices/vehicleSlice';
 import type { LeadDetail } from '../core/interfaces/Lead';
 import { ViewHealthLeadProduct } from '../app/stores/slices/healthSlice';
 import { ViewDetails } from '../components/CustomerDetails/ViewDetails';
+import GoBack from '../components/Layout/ui/GoBack';
 
 const mockActivities: Activity[] = [{
   id: '1',
@@ -118,7 +119,10 @@ export function CustomerDetails() {
     }
 
     setVopen(true)
+  }
 
+  const handleEditProduct = (lead: LeadDetail) => {
+    navigate(`/leads/${lead.product}/update/${customer_id}/${lead.uuid}`)
   }
 
   return <div className="space-y-6">
@@ -131,11 +135,7 @@ export function CustomerDetails() {
     />
 
     {/* Header */}
-    <div className="flex items-center gap-4 mb-6">
-      <Button variant="ghost" size="sm" onClick={() => navigate('/customers')}>
-        <ArrowLeft className="w-4 h-4 mr-1" /> Back
-      </Button>
-    </div>
+    <GoBack />
 
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Left Column: Profile */}
@@ -210,7 +210,7 @@ export function CustomerDetails() {
                 <LeadDetails
                   leads={leads}
                   onView={handleViewProudct}
-                  onEdit={(lead) => console.log('Edit', lead)}
+                  onEdit={handleEditProduct}
                   onDelete={(lead) => console.log('Delete', lead)}
                 />
               )

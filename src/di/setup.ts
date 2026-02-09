@@ -39,9 +39,11 @@ import { ManageUpsertCustomerUseCase } from "../app/usecases/settings/ManageUpse
 /* leads -> vehicles */
 import { UpsertVehicleLeadProductUseCase } from "../app/usecases/leads/vehicles/UpsertVehicleLeadProductUseCase.ts";
 import { ViewVehicleLeadProductUseCase } from "../app/usecases/leads/vehicles/ViewVehicleLeadProductUseCase.ts";
+import { FindVehicleLeadProductUseCase } from "../app/usecases/leads/vehicles/FindVehicleLeadProductUseCase.ts";
 /* leads -> healths */
 import { UpsertHealthLeadProductUseCase } from "../app/usecases/leads/healths/UpsertHealthLeadProductUseCase.ts";
 import { ViewHealthLeadProductUseCase } from "../app/usecases/leads/healths/ViewHealthLeadProductUseCase.ts";
+import { FindHealthLeadProductUseCase } from "../app/usecases/leads/healths/FindHealthLeadProductUseCase.ts";
 
 /*---------------------*services*---------------------*/
 import { VehiclePrerequisiteService } from "../app/services/VehiclePrerequisiteService.ts";
@@ -97,9 +99,11 @@ export function setup() {
     /* lead -> vehicles */
     const upsertVehicleLeadProductUseCase = new UpsertVehicleLeadProductUseCase(vehicleRepository)
     const viewVehicleLeadProductUseCase = new ViewVehicleLeadProductUseCase(vehicleRepository)
+    const findVehicleLeadProductUseCase = new FindVehicleLeadProductUseCase(vehicleRepository)
     /* lead -> healths */
     const upsertHealthLeadProductUseCase = new UpsertHealthLeadProductUseCase(healthRepository)
     const viewHealthLeadProductUseCase = new ViewHealthLeadProductUseCase(healthRepository)
+    const findHealthLeadProductUseCase = new FindHealthLeadProductUseCase(healthRepository)
 
     /*---------------------*Services*---------------------*/
     const vehiclePrerequisiteService = new VehiclePrerequisiteService(settingRepository)
@@ -154,9 +158,11 @@ export function setup() {
     /* leads -> vehicles */
     container.register(TOKENS.UpsertVehicleLeadProductUseCase, upsertVehicleLeadProductUseCase)
     container.register(TOKENS.ViewVehicleLeadProductUseCase, viewVehicleLeadProductUseCase)
+    container.register(TOKENS.FindVehicleLeadProductUseCase, findVehicleLeadProductUseCase)
     /* leads -> healths */
     container.register(TOKENS.UpsertHealthLeadProductUseCase, upsertHealthLeadProductUseCase)
     container.register(TOKENS.ViewHealthLeadProductUseCase, viewHealthLeadProductUseCase)
+    container.register(TOKENS.FindHealthLeadProductUseCase, findHealthLeadProductUseCase)
 
     /*---------------------*services*---------------------*/
     container.register(TOKENS.VehiclePrerequisiteService, vehiclePrerequisiteService)

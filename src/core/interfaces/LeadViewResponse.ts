@@ -1,3 +1,6 @@
+import type { LeadHealthForm } from "./LeadHealth";
+import type { LeadVehicleForm } from "./LeadVehicle";
+
 // Common base for all leads
 interface BaseLead {
     product: "vehicle" | "health";
@@ -60,4 +63,8 @@ export type Lead = VehicleLead | HealthLead;
 // Example wrapper if API returns { lead: ... }
 export interface LeadResponse {
     lead: Lead;
+}
+
+export interface LeadLookUpResponse {
+    lead: LeadVehicleForm | LeadHealthForm
 }

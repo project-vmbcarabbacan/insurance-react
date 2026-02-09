@@ -8,7 +8,6 @@ export class UpsertHealthLeadProductUseCase {
 
     async execute(data: LeadHealthForm): Promise<LeadMessageResponse> {
         try {
-            console.log({ execute: data })
             return await this.lead.storeHealthLead(data)
         } catch (error: unknown) {
             if (error instanceof Error) {

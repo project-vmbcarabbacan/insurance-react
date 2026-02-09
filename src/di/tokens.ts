@@ -42,9 +42,11 @@ export const TOKENS = {
     /* Leads -> Vehicles */
     UpsertVehicleLeadProductUseCase: 'UpsertVehicleLeadProductUseCase',
     ViewVehicleLeadProductUseCase: 'ViewVehicleLeadProductUseCase',
+    FindVehicleLeadProductUseCase: 'FindVehicleLeadProductUseCase',
     /* Leads -> Healths */
     UpsertHealthLeadProductUseCase: 'UpsertHealthLeadProductUseCase',
     ViewHealthLeadProductUseCase: 'ViewHealthLeadProductUseCase',
+    FindHealthLeadProductUseCase: 'FindHealthLeadProductUseCase',
 
 
     /***SERVICES***/

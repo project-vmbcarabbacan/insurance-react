@@ -1,5 +1,5 @@
 import type { ViewSection } from "../../core/interfaces/LeadViewConfig"
-import type { LeadResponse } from "../../core/interfaces/LeadViewResponse"
+import type { LeadLookUpResponse, LeadResponse } from "../../core/interfaces/LeadViewResponse"
 
 interface leadView {
     lead: LeadResponse,
@@ -13,4 +13,9 @@ export interface LeadMessageResponse {
 export interface LeadViewResponse {
     message: string
     data: leadView
+}
+
+export interface LeadFindResponse {
+    message: string
+    data: LeadLookUpResponse
 }
