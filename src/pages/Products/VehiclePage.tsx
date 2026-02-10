@@ -89,6 +89,8 @@ export const VehicleInsurancePage = () => {
 
     useEffect(() => {
 
+        if (!lead_id) return
+
         const fetchData = async () => {
             try {
                 const payload = await dispatch(
@@ -119,7 +121,7 @@ export const VehicleInsurancePage = () => {
 
 
     useEffect(() => {
-        if (!data.vehicle_year && !data.vehicle_make_id) return;
+        if ((!data.vehicle_year && !data.vehicle_make_id) || data.vehicle_make_id == 0) return;
 
         dispatch(
             SettingVehicleModels({
@@ -131,7 +133,7 @@ export const VehicleInsurancePage = () => {
     }, [data.vehicle_year, data.vehicle_make_id, dispatch]);
 
     useEffect(() => {
-        if (!data.vehicle_year && !data.vehicle_make_id && !data.vehicle_model_id) return;
+        if ((!data.vehicle_year && !data.vehicle_make_id && !data.vehicle_model_id) || data.vehicle_model_id == 0) return;
 
 
         dispatch(

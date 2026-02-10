@@ -29,6 +29,12 @@ interface upsertCustomerResponse {
 interface detailsCustomerResponse {
     country_codes: LabelValue[]
     products: LabelValue[]
+    communication_preferences: LabelValue[]
+}
+
+interface leadDetailResponse {
+    activity_responses: LabelValue[]
+    communication_preferences: LabelValue[]
 }
 
 export type leadVehicleResponse = {
@@ -92,5 +98,10 @@ export type SettingLeadVehiclePrerequisitesResponse = {
 
 export type SettingLeadHealthPrerequisitesResponse = {
     data: leadHealthResponse
+    message: string
+}
+
+export type SettingLeadActivityPrerequisiteResponse = {
+    data: leadDetailResponse
     message: string
 }

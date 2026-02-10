@@ -78,6 +78,7 @@ export const HealthInsurancePage = () => {
     };
 
     const [data, setData] = useState<LeadHealthForm>(initialFormState);
+    const [isDisableInsuranceFor, setIsDisableInsuranceFor] = useState<boolean>(false)
 
     const [errors, setErrors] = useState<
         Partial<Record<string, string>>
@@ -110,10 +111,15 @@ export const HealthInsurancePage = () => {
                     FindHealthLeadProduct({ lead_uuid: String(lead_id) })
                 ).unwrap();
 
+                const lead = payload.data.lead as Partial<LeadHealthForm>
                 setData(prev => ({
                     ...prev,
-                    ...(payload.data.lead as Partial<LeadHealthForm>),
+                    ...lead,
                 }));
+
+                if (lead.insurance_for) {
+                    setIsDisableInsuranceFor(true)
+                }
             } catch (err) {
                 console.error(err);
             }
@@ -302,7 +308,7 @@ export const HealthInsurancePage = () => {
                                 }
                                 error={errors.insurance_for}
                                 inline
-                                disabled={lead_id}
+                                disabled={Boolean(lead_id) && isDisableInsuranceFor}
                             />
                         </div>
 

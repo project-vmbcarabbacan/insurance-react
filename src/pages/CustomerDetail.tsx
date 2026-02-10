@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Mail, Phone, MoreHorizontal, MessageSquare, PhoneCall, Video, FileText } from 'lucide-react';
+import { Mail, Phone, MessageSquare, PhoneCall, Video, FileText } from 'lucide-react';
 import { Button } from '../components/Layout/ui/Button';
 import { Card } from '../components/Layout/ui/Card';
 import { Avatar } from '../components/Layout/ui/Avatar';
@@ -16,8 +16,10 @@ import type { LeadDetail } from '../core/interfaces/Lead';
 import { ViewHealthLeadProduct } from '../app/stores/slices/healthSlice';
 import { ViewDetails } from '../components/CustomerDetails/ViewDetails';
 import GoBack from '../components/Layout/ui/GoBack';
-import { ManageCustomerDetail } from '../app/stores/slices/settingSlice';
+import { ManageCustomerDetail, ManageLeadActivity } from '../app/stores/slices/settingSlice';
 import { CustomerProductAction } from '../components/CustomerDetails/CustomerProductAction';
+import { UpsertLeadActivity } from '../components/CustomerDetails/UpsertLeadActivity';
+import { GetLeads } from '../app/stores/slices/leadSlice';
 
 const mockActivities: Activity[] = [{
   id: '1',
@@ -52,7 +54,9 @@ export function CustomerDetails() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { customer_id } = useParams<{ customer_id: string }>();
-  const [vopen, setVopen] = useState(false);
+  const [vopen, setVopen] = useState<boolean>(false);
+  const [laOpen, setlaOpen] = useState<boolean>(false);
+  const [leadUuid, setLeadUuid] = useState<string>('')
 
   const customer = useAppSelector(state => state.customer.customer)
   const leads = useAppSelector(state => state.lead.leads)
@@ -122,6 +126,16 @@ export function CustomerDetails() {
     setVopen(true)
   }
 
+  const handleAddLeadActivity = (lead: LeadDetail) => {
+    dispatch(ManageLeadActivity(lead.uuid))
+    setLeadUuid(lead.uuid)
+    setlaOpen(true)
+  }
+
+  const handleLeads = () => {
+    dispatch(GetLeads(customer_id))
+  }
+
   const handleEditProduct = (lead: LeadDetail) => {
     navigate(`/leads/${lead.product}/update/${customer_id}/${lead.uuid}`)
   }
@@ -137,6 +151,13 @@ export function CustomerDetails() {
       onOpenChange={setVopen}
       lead={lead}
       leadSections={view}
+    />
+
+    <UpsertLeadActivity
+      uuid={leadUuid}
+      open={laOpen}
+      onOpenChange={setlaOpen}
+      onSuccess={handleLeads}
     />
 
     {/* Header */}
@@ -219,7 +240,7 @@ export function CustomerDetails() {
                   leads={leads}
                   onView={handleViewProudct}
                   onEdit={handleEditProduct}
-                  onDelete={(lead) => console.log('Delete', lead)}
+                  onActivity={handleAddLeadActivity}
                 />
               )
             }

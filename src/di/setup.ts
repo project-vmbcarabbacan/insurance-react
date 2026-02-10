@@ -11,6 +11,7 @@ import { TeamRepository } from "../infrastructure/repositories/TeamRepository.ts
 import { CustomerRepository } from "../infrastructure/repositories/CustomerRepository.ts";
 import { VehicleRepository } from "../infrastructure/repositories/VehicleRepository.ts";
 import { HealthRepository } from "../infrastructure/repositories/HealthRepository.ts";
+import { LeadRepository } from "../infrastructure/repositories/LeadRepository.ts";
 
 /*---------------------*usecases*---------------------*/
 /* auth */
@@ -37,6 +38,10 @@ import { InsuranceProductUseCase } from "../app/usecases/settings/InsuranceProdu
 import { ManageCustomerUseCase } from "../app/usecases/settings/ManageCustomerUseCase.ts";
 import { ManageUpsertCustomerUseCase } from "../app/usecases/settings/ManageUpsertCustomerUseCase.ts";
 import { ManageCustomerDetailUseCase } from "../app/usecases/settings/ManageCustomerDetailUseCase.ts";
+import { ManageLeadActivityUseCase } from "../app/usecases/settings/ManageLeadActivityUseCase.ts";
+/* leads  */
+import { LeadActivityUseCase } from "../app/usecases/leads/LeadActivityUseCase.ts";
+import { LeadsUseCase } from "../app/usecases/leads/LeadsUseCase.ts";
 /* leads -> vehicles */
 import { UpsertVehicleLeadProductUseCase } from "../app/usecases/leads/vehicles/UpsertVehicleLeadProductUseCase.ts";
 import { ViewVehicleLeadProductUseCase } from "../app/usecases/leads/vehicles/ViewVehicleLeadProductUseCase.ts";
@@ -65,6 +70,7 @@ export function setup() {
     const customerRepository = new CustomerRepository(api)
     const vehicleRepository = new VehicleRepository(api)
     const healthRepository = new HealthRepository(api)
+    const leadRepository = new LeadRepository(api)
 
     /*---------------------*usecases*---------------------*/
 
@@ -97,7 +103,11 @@ export function setup() {
     const manageCustomerUseCase = new ManageCustomerUseCase(settingRepository)
     const manageUpsertCustomerUseCase = new ManageUpsertCustomerUseCase(settingRepository)
     const manageCustomerDetailUseCase = new ManageCustomerDetailUseCase(settingRepository)
+    const manageLeadActivityUseCase = new ManageLeadActivityUseCase(settingRepository)
 
+    /* lead  */
+    const leadActivityUseCase = new LeadActivityUseCase(leadRepository)
+    const leadsUseCase = new LeadsUseCase(leadRepository)
     /* lead -> vehicles */
     const upsertVehicleLeadProductUseCase = new UpsertVehicleLeadProductUseCase(vehicleRepository)
     const viewVehicleLeadProductUseCase = new ViewVehicleLeadProductUseCase(vehicleRepository)
@@ -125,6 +135,7 @@ export function setup() {
     container.register(TOKENS.CustomerRepository, customerRepository)
     container.register(TOKENS.VehicleRepository, vehicleRepository)
     container.register(TOKENS.HealthRepository, healthRepository)
+    container.register(TOKENS.LeadRepository, leadRepository)
 
     /*---------------------*usecases*---------------------*/
 
@@ -157,7 +168,11 @@ export function setup() {
     container.register(TOKENS.ManageCustomerUseCase, manageCustomerUseCase)
     container.register(TOKENS.ManageUpsertCustomerUseCase, manageUpsertCustomerUseCase)
     container.register(TOKENS.ManageCustomerDetailUseCase, manageCustomerDetailUseCase)
+    container.register(TOKENS.ManageLeadActivityUseCase, manageLeadActivityUseCase)
 
+    /* leads  */
+    container.register(TOKENS.LeadActivityUseCase, leadActivityUseCase)
+    container.register(TOKENS.LeadsUseCase, leadsUseCase)
     /* leads -> vehicles */
     container.register(TOKENS.UpsertVehicleLeadProductUseCase, upsertVehicleLeadProductUseCase)
     container.register(TOKENS.ViewVehicleLeadProductUseCase, viewVehicleLeadProductUseCase)

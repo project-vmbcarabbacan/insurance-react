@@ -1,7 +1,7 @@
 import type { ApiService } from "../api/ApiService";
 import { API_URL } from "../api/Urls";
 import type { SettingContract } from "../../domain/contracts/SettingContract";
-import type { SettingDetailCustomerResponse, SettingInsuranceProductResponse, SettingLeadHealthPrerequisitesResponse, SettingLeadVehiclePrerequisitesResponse, SettingManageCustomerResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse, SettingVehiclePrerequisitesResponse } from "../dtos/SettingResponse";
+import type { SettingDetailCustomerResponse, SettingInsuranceProductResponse, SettingLeadActivityPrerequisiteResponse, SettingLeadHealthPrerequisitesResponse, SettingLeadVehiclePrerequisitesResponse, SettingManageCustomerResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse, SettingVehiclePrerequisitesResponse } from "../dtos/SettingResponse";
 
 export class SettingRepository implements SettingContract {
     constructor(private api: ApiService) { }
@@ -24,6 +24,10 @@ export class SettingRepository implements SettingContract {
 
     async detailCustomer(): Promise<SettingDetailCustomerResponse> {
         return await this.api.get<SettingDetailCustomerResponse>(`/${API_URL.setting.detailCustomer}`)
+    }
+
+    async leadActivity(uuid: string): Promise<SettingLeadActivityPrerequisiteResponse> {
+        return await this.api.get<SettingLeadActivityPrerequisiteResponse>(`/${API_URL.setting.leadActivity}/${uuid}`)
     }
 
     async vehiclePrerequisites(): Promise<SettingLeadVehiclePrerequisitesResponse> {

@@ -4,7 +4,7 @@ import { API_URL } from '../../../infrastructure/api/Urls'
 import { ManageTeamUseCase } from '../../usecases/settings/ManageTeamUseCase'
 import { TOKENS } from '../../../di/tokens'
 import { container } from '../../../di/container'
-import type { SettingDetailCustomerResponse, SettingInsuranceProductResponse, SettingLeadHealthPrerequisitesResponse, SettingLeadVehiclePrerequisitesResponse, SettingManageCustomerResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse, SettingVehiclePrerequisitesResponse } from '../../../infrastructure/dtos/SettingResponse'
+import type { SettingDetailCustomerResponse, SettingInsuranceProductResponse, SettingLeadActivityPrerequisiteResponse, SettingLeadHealthPrerequisitesResponse, SettingLeadVehiclePrerequisitesResponse, SettingManageCustomerResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse, SettingVehiclePrerequisitesResponse } from '../../../infrastructure/dtos/SettingResponse'
 import type { LabelValue } from '../../../core/interfaces/LabelValue'
 import type { InsuranceProductUseCase } from '../../usecases/settings/InsuranceProductUseCase'
 import type { ManageCustomerUseCase } from '../../usecases/settings/ManageCustomerUseCase'
@@ -12,9 +12,8 @@ import type { ManageUpsertCustomerUseCase } from '../../usecases/settings/Manage
 import type { keyBoolean } from '../../../infrastructure/dtos/TeamResponse'
 import type { VehiclePrerequisiteService } from '../../services/VehiclePrerequisiteService'
 import type { HealthPrerequisiteService } from '../../services/HealthPrerequisiteService'
-import { CustomerDetail } from './customerSlice'
-import type { CustomerDetailsResponse } from '../../../infrastructure/dtos/CustomerResponse'
 import type { ManageCustomerDetailUseCase } from '../../usecases/settings/ManageCustomerDetailUseCase'
+import type { ManageLeadActivityUseCase } from '../../usecases/settings/ManageLeadActivityUseCase'
 
 interface SettingState {
     roles: SlugName[]
@@ -42,6 +41,8 @@ interface SettingState {
     relationships: LabelValue[]
     medical_conditions: LabelValue[]
     marital_statuses: LabelValue[]
+    communication_preferences: LabelValue[]
+    activity_responses: LabelValue[]
 }
 
 const initialState: SettingState = {
@@ -70,6 +71,8 @@ const initialState: SettingState = {
     relationships: [],
     medical_conditions: [],
     marital_statuses: [],
+    communication_preferences: [],
+    activity_responses: [],
 }
 
 /* pages */
@@ -110,6 +113,14 @@ export const ManageCustomerDetail = createAsyncThunk(
     async () => {
         const setting = container.resolve<ManageCustomerDetailUseCase>(TOKENS.ManageCustomerDetailUseCase)
         return setting.execute()
+    }
+)
+
+export const ManageLeadActivity = createAsyncThunk(
+    API_URL.setting.leadActivity,
+    async (uuid: string) => {
+        const setting = container.resolve<ManageLeadActivityUseCase>(TOKENS.ManageLeadActivityUseCase)
+        return setting.execute(uuid)
     }
 )
 
@@ -189,6 +200,7 @@ const settingSlice = createSlice({
             .addCase(ManageCustomerDetail.fulfilled, (state: SettingState, action: PayloadAction<SettingDetailCustomerResponse>) => {
                 state.insurance_products = action.payload.data.products
                 state.country_codes = action.payload.data.country_codes
+                state.communication_preferences = action.payload.data.communication_preferences
             })
             .addCase(SettingVehiclePrerequisites.fulfilled, (state: SettingState, action: PayloadAction<SettingLeadVehiclePrerequisitesResponse>) => {
                 state.years = action.payload.data.years
@@ -204,6 +216,10 @@ const settingSlice = createSlice({
             })
             .addCase(SettingVehicleModels.fulfilled, (state: SettingState, action: PayloadAction<SettingVehiclePrerequisitesResponse>) => {
                 state.models = action.payload.data
+            })
+            .addCase(ManageLeadActivity.fulfilled, (state: SettingState, action: PayloadAction<SettingLeadActivityPrerequisiteResponse>) => {
+                state.activity_responses = action.payload.data.activity_responses
+                state.communication_preferences = action.payload.data.communication_preferences
             })
             .addCase(SettingVehicleTrims.fulfilled, (state: SettingState, action: PayloadAction<SettingVehiclePrerequisitesResponse>) => {
                 state.trims = action.payload.data

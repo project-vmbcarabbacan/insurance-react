@@ -31,6 +31,8 @@ export const API_URL = {
             find: 'lead/health/find'
 
         },
+        activity: 'lead/activity/add',
+        leads: 'lead/leads',
     },
     setting: {
         manageTeams: 'setting/manage/teams',
@@ -38,6 +40,7 @@ export const API_URL = {
         insuranceProduct: 'setting/insurance/product',
         upsertCustomer: 'setting/customer/upsert',
         detailCustomer: 'setting/customer/details',
+        leadActivity: 'setting/lead/activity',
         vehicle: {
             prerequisites: 'setting/vehicle/prerequisites',
             make: 'setting/vehicle/make',

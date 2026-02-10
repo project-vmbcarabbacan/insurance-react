@@ -25,12 +25,13 @@ export const ViewDetails: React.FC<LeadViewProps> = ({
     open,
     onOpenChange,
 }) => {
-    if (!lead) return null;
 
     const scrollRef = useRef<HTMLDivElement>(null);
-    const [isDragging, setIsDragging] = useState(false);
-    const [startY, setStartY] = useState(0);
-    const [scrollTop, setScrollTop] = useState(0);
+    const [isDragging, setIsDragging] = useState<boolean>(false);
+    const [startY, setStartY] = useState<number>(0);
+    const [scrollTop, setScrollTop] = useState<number>(0);
+
+    if (!lead) return null;
 
     const handleMouseDown = (e: React.MouseEvent) => {
         setIsDragging(true);

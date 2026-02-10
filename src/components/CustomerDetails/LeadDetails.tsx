@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarClock, MoreVertical, Eye, Pencil, Trash2 } from 'lucide-react';
+import { CalendarClock, MoreVertical, Eye, Pencil, ClipboardList } from 'lucide-react';
 import ActionMenu from '../Layout/ui/ActionMenu';
 import type { LeadDetail } from '../../core/interfaces/Lead';
 
@@ -7,7 +7,7 @@ interface LeadDetailsProps {
     leads: LeadDetail[] | null;
     onView?: (lead: LeadDetail) => void;
     onEdit?: (lead: LeadDetail) => void;
-    onDelete?: (lead: LeadDetail) => void;
+    onActivity?: (lead: LeadDetail) => void;
 }
 
 /* ---------------- Status helpers ---------------- */
@@ -37,7 +37,7 @@ const LeadDetails: React.FC<LeadDetailsProps> = ({
     leads,
     onView,
     onEdit,
-    onDelete,
+    onActivity,
 }) => {
     if (!leads) return null;
 
@@ -98,11 +98,10 @@ const LeadDetails: React.FC<LeadDetailsProps> = ({
                                     icon: Pencil,
                                     onClick: () => onEdit(lead),
                                 },
-                                onDelete && {
-                                    label: 'Delete',
-                                    icon: Trash2,
-                                    danger: true,
-                                    onClick: () => onDelete(lead),
+                                onEdit && {
+                                    label: 'Activity',
+                                    icon: ClipboardList,
+                                    onClick: () => onActivity(lead),
                                 },
                             ].filter(Boolean) as any}
                         />
