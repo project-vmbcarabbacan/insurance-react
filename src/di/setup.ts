@@ -54,6 +54,7 @@ import { FindHealthLeadProductUseCase } from "../app/usecases/leads/healths/Find
 /*---------------------*services*---------------------*/
 import { VehiclePrerequisiteService } from "../app/services/VehiclePrerequisiteService.ts";
 import { HealthPrerequisiteService } from "../app/services/HealthPrerequisiteService.ts";
+import { LeadService } from "../app/services/LeadService.ts";
 
 export function setup() {
     /**
@@ -120,6 +121,7 @@ export function setup() {
     /*---------------------*Services*---------------------*/
     const vehiclePrerequisiteService = new VehiclePrerequisiteService(settingRepository)
     const healthPrerequisiteService = new HealthPrerequisiteService(settingRepository)
+    const leadService = new LeadService(leadRepository)
 
     /**
      * CONTAINERIZATION
@@ -185,5 +187,6 @@ export function setup() {
     /*---------------------*services*---------------------*/
     container.register(TOKENS.VehiclePrerequisiteService, vehiclePrerequisiteService)
     container.register(TOKENS.HealthPrerequisiteService, healthPrerequisiteService)
+    container.register(TOKENS.LeadService, leadService)
 
 }

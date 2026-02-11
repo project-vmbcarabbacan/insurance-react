@@ -40,7 +40,7 @@ export function Pagination({
     if (totalPages <= 1) return null
 
     return (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-8 p-2">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3  px-2 py-1">
             {/* Context */}
             <p className="text-sm text-gray-500">
                 Page <span className="font-medium text-gray-900">{currentPage}</span> of{' '}

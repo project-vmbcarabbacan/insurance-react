@@ -31,7 +31,10 @@ export const API_URL = {
             find: 'lead/health/find'
 
         },
-        activity: 'lead/activity/add',
+        activity: {
+            get: 'lead/activity',
+            add: 'lead/activity/add',
+        },
         leads: 'lead/leads',
     },
     setting: {

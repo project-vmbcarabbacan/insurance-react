@@ -1,6 +1,5 @@
 import type { Customer, UpsertCustomer } from "../../core/interfaces/Customer"
-import type { LabelValue } from "../../core/interfaces/LabelValue"
-import type { LeadDetail } from "../../core/interfaces/Lead"
+import type { LeadPaginatorResponse } from "../../core/interfaces/Lead"
 import type { LinksResponse } from "../../infrastructure/dtos/TeamResponse"
 
 interface PaginatorResponse {
@@ -37,7 +36,7 @@ interface CustomReponse {
 
 interface CustomerDetails {
     customer: CustomerDetail
-    leads: LeadDetail[]
+    leads: LeadPaginatorResponse
 }
 
 export interface CustomerResponse {

@@ -1,100 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Mail, Phone, MessageSquare, PhoneCall, Video, FileText } from 'lucide-react';
+import { Mail, Phone } from 'lucide-react';
 import { Button } from '../components/Layout/ui/Button';
 import { Card } from '../components/Layout/ui/Card';
 import { Avatar } from '../components/Layout/ui/Avatar';
 import { Badge } from '../components/Layout/ui/Badge';
-import { Tabs } from '../components/Layout/ui/Tabs';
-import type { Activity } from '../core/types/crm';
 import { useAppDispatch, useAppSelector } from '../app/stores/hooks';
 import { CustomerDetail } from '../app/stores/slices/customerSlice';
 import ContactInfoCard from '../components/CustomerDetails/ContactInformation';
-import LeadDetails from '../components/CustomerDetails/LeadDetails';
-import { ViewVehicleLeadProduct } from '../app/stores/slices/vehicleSlice';
-import type { LeadDetail } from '../core/interfaces/Lead';
-import { ViewHealthLeadProduct } from '../app/stores/slices/healthSlice';
-import { ViewDetails } from '../components/CustomerDetails/ViewDetails';
 import GoBack from '../components/Layout/ui/GoBack';
-import { ManageCustomerDetail, ManageLeadActivity } from '../app/stores/slices/settingSlice';
-import { CustomerProductAction } from '../components/CustomerDetails/CustomerProductAction';
-import { UpsertLeadActivity } from '../components/CustomerDetails/UpsertLeadActivity';
-import { GetLeads } from '../app/stores/slices/leadSlice';
+import { ManageCustomerDetail } from '../app/stores/slices/settingSlice';
+import { LeadSection } from '../components/CustomerDetails/LeadSection';
+import { LeadDetailSection } from '../components/CustomerDetails/LeadDetailSection';
+import type { LeadDetail } from '../core/interfaces/Lead';
+import { GetLeadActivity } from '../app/stores/slices/leadSlice';
+import { ViewVehicleLeadProduct } from '../app/stores/slices/vehicleSlice';
+import { ViewHealthLeadProduct } from '../app/stores/slices/healthSlice';
 
-const mockActivities: Activity[] = [{
-  id: '1',
-  type: 'email',
-  title: 'Sent proposal for Q4',
-  description: 'Attached the updated pricing deck for review.',
-  date: '2 hours ago',
-  userId: '1'
-}, {
-  id: '2',
-  type: 'meeting',
-  title: 'Product Demo',
-  description: 'Walked through the new reporting features. Client seemed impressed.',
-  date: 'Yesterday',
-  userId: '1'
-}, {
-  id: '3',
-  type: 'call',
-  title: 'Discovery Call',
-  description: 'Discussed requirements and timeline.',
-  date: '3 days ago',
-  userId: '1'
-}, {
-  id: '4',
-  type: 'note',
-  title: 'Internal Note',
-  description: 'Budget approval pending from their CFO.',
-  date: '1 week ago',
-  userId: '1'
-}];
 export function CustomerDetails() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { customer_id } = useParams<{ customer_id: string }>();
-  const [vopen, setVopen] = useState<boolean>(false);
-  const [laOpen, setlaOpen] = useState<boolean>(false);
-  const [leadUuid, setLeadUuid] = useState<string>('')
+  const [rowUuid, setRowUuid] = useState<string>("")
+  const [product, setProduct] = useState<string>("")
+  const [activeTab, setActiveTab] = useState<string>('view');
 
   const customer = useAppSelector(state => state.customer.customer)
   const leads = useAppSelector(state => state.lead.leads)
-  const lead = useAppSelector(state => state.lead.lead)
-  const view = useAppSelector(state => state.lead.view)
 
-
-  const [activeTab, setActiveTab] = useState('leads');
-  // Mock data - in real app would fetch by ID
-
-  const getActivityIcon = (type: string) => {
-    switch (type) {
-      case 'email':
-        return <Mail className="w-4 h-4" />;
-      case 'call':
-        return <PhoneCall className="w-4 h-4" />;
-      case 'meeting':
-        return <Video className="w-4 h-4" />;
-      case 'note':
-        return <FileText className="w-4 h-4" />;
-      default:
-        return <MessageSquare className="w-4 h-4" />;
-    }
-  };
-  const getActivityColor = (type: string) => {
-    switch (type) {
-      case 'email':
-        return 'bg-blue-100 text-blue-600';
-      case 'call':
-        return 'bg-green-100 text-green-600';
-      case 'meeting':
-        return 'bg-purple-100 text-purple-600';
-      case 'note':
-        return 'bg-yellow-100 text-yellow-600';
-      default:
-        return 'bg-gray-100 text-gray-600';
-    }
-  };
+  /* ------------------------ Handlers ------------------------ */
+  const handleRowClick = (lead: LeadDetail) => {
+    setRowUuid(lead.uuid)
+    setProduct(lead.product)
+  }
 
   /* ------------------------ Check customer_id ------------------------ */
   useEffect(() => {
@@ -110,55 +48,38 @@ export function CustomerDetails() {
     dispatch(CustomerDetail(String(customer_id)))
   }, [customer_id, dispatch])
 
+  React.useEffect(() => {
+    if (!rowUuid && leads.length > 0) {
+      const lead = leads[0]
+      setRowUuid(lead.uuid)
+      setProduct(lead.product)
+    }
+  }, [rowUuid, leads])
+
   useEffect(() => {
     dispatch(ManageCustomerDetail())
   }, [dispatch])
 
-  if (!customer_id) return null;
+  useEffect(() => {
+    if (!rowUuid) return
 
-  const handleViewProudct = (lead: LeadDetail) => {
-    if (lead.product === 'vehicle') {
-      dispatch(ViewVehicleLeadProduct(lead.uuid))
-    } else if (lead.product === 'health') {
-      dispatch(ViewHealthLeadProduct(lead.uuid))
+    if (activeTab === 'activity')
+      dispatch(GetLeadActivity(rowUuid))
+    else if (activeTab === 'view') {
+      if (product === 'vehicle') {
+        dispatch(ViewVehicleLeadProduct(rowUuid))
+      } else if (product === 'health') {
+        dispatch(ViewHealthLeadProduct(rowUuid))
+      }
     }
 
-    setVopen(true)
-  }
+  }, [rowUuid, product, activeTab, dispatch])
 
-  const handleAddLeadActivity = (lead: LeadDetail) => {
-    dispatch(ManageLeadActivity(lead.uuid))
-    setLeadUuid(lead.uuid)
-    setlaOpen(true)
-  }
+  if (!customer_id) return null;
 
-  const handleLeads = () => {
-    dispatch(GetLeads(customer_id))
-  }
-
-  const handleEditProduct = (lead: LeadDetail) => {
-    navigate(`/leads/${lead.product}/update/${customer_id}/${lead.uuid}`)
-  }
-
-  const HandleAddLead = (uuid: string, product: string) => {
-    navigate(`/leads/${product}/create/${uuid}`)
-  }
 
   return <div className="space-y-6">
-    {/* modals */}
-    <ViewDetails
-      open={vopen}
-      onOpenChange={setVopen}
-      lead={lead}
-      leadSections={view}
-    />
 
-    <UpsertLeadActivity
-      uuid={leadUuid}
-      open={laOpen}
-      onOpenChange={setlaOpen}
-      onSuccess={handleLeads}
-    />
 
     {/* Header */}
     <GoBack />
@@ -203,93 +124,19 @@ export function CustomerDetails() {
           customer={customer}
         />
 
-
       </div>
 
       {/* Right Column: Content */}
-      <div className="lg:col-span-2 space-y-6">
-        <Card noPadding className="overflow-hidden">
-          <div className="px-6 pt-2">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <Tabs
-                  tabs={[
-                    { id: 'leads', label: 'Leads' },
-                    { id: 'activity', label: 'Activity' },
-                    { id: 'notes', label: 'Notes' },
-                    { id: 'deals', label: 'Deals' }
-                  ]}
-                  activeTab={activeTab}
-                  onChange={setActiveTab}
-                />
-              </div>
-              <CustomerProductAction
-                row={customer}
-                handleAdd={HandleAddLead}
-              />
-              {/* <Button variant="ghost" size="sm" className="h-8 w-8 p-0 ml-2">
-                <MoreHorizontal className="w-4 h-4" />
-              </Button> */}
-            </div>
-          </div>
-
-          <div className="p-6">
-            {
-              activeTab === 'leads' && (
-                <LeadDetails
-                  leads={leads}
-                  onView={handleViewProudct}
-                  onEdit={handleEditProduct}
-                  onActivity={handleAddLeadActivity}
-                />
-              )
-            }
-
-            {activeTab === 'activity' && <div className="space-y-8">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-semibold text-gray-900 dark:text-white">
-                  Timeline
-                </h3>
-                <Button size="sm" variant="secondary">
-                  Log Activity
-                </Button>
-              </div>
-
-              <div className="relative border-l-2 border-gray-200 dark:border-gray-700 ml-3 space-y-8 pb-4">
-                {mockActivities.map(activity => <div key={activity.id} className="relative pl-8">
-                  <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full border-2 border-white dark:border-gray-800 ${activity.type === 'call' ? 'bg-green-500' : activity.type === 'meeting' ? 'bg-purple-500' : 'bg-blue-500'}`}></div>
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full ${getActivityColor(activity.type)}`}>
-                          {getActivityIcon(activity.type)}
-                        </span>
-                        <span className="font-medium text-gray-900 dark:text-white">
-                          {activity.title}
-                        </span>
-                      </div>
-                      <p className="text-gray-600 dark:text-gray-300 text-sm">
-                        {activity.description}
-                      </p>
-                    </div>
-                    <span className="text-xs text-gray-400 whitespace-nowrap">
-                      {activity.date}
-                    </span>
-                  </div>
-                </div>)}
-              </div>
-            </div>}
-
-            {activeTab === 'notes' && <div className="text-center py-12 text-gray-500">
-              <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-              <p>No notes yet. Start typing to add one.</p>
-              <Button variant="secondary" className="mt-4">
-                Add Note
-              </Button>
-            </div>}
-          </div>
-        </Card>
-      </div>
+      <LeadSection
+        customer_id={customer_id}
+        handleRowClick={handleRowClick}
+        handleViewProudct={handleRowClick}
+      />
     </div>
+
+    <LeadDetailSection
+      activeTab={activeTab}
+      onActiveTab={setActiveTab}
+    />
   </div>;
 }

@@ -1,4 +1,4 @@
-import type { LeadDetail } from "../../core/interfaces/Lead"
+import type { LeadPaginatorResponse } from "../../core/interfaces/Lead"
 import type { ViewSection } from "../../core/interfaces/LeadViewConfig"
 import type { LeadLookUpResponse, LeadResponse } from "../../core/interfaces/LeadViewResponse"
 
@@ -7,8 +7,22 @@ interface leadView {
     view: ViewSection[]
 }
 
+export interface ActivityObject {
+    type: string,
+    icon: string,
+    performed_by: string,
+    communication_preference: string | null,
+    lead_activity_response: string | null,
+    notes: string | null
+    created_at: string
+}
+
+export interface ActivityData {
+    activities: ActivityObject[]
+}
+
 interface LeadsReponse {
-    leads: LeadDetail[]
+    leads: LeadPaginatorResponse
 }
 
 export interface LeadMessageResponse {
@@ -28,4 +42,9 @@ export interface LeadFindResponse {
 export interface LeadsMessageResponse {
     message: string
     data: LeadsReponse
+}
+
+export interface ViewLeadActivityResponse {
+    message: string
+    data: ActivityData
 }
