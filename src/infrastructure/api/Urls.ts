@@ -19,6 +19,9 @@ export const API_URL = {
         patchCustomer: 'customers/patch',
         details: 'customers/details'
     },
+    document: {
+        upload: 'documents/upload'
+    },
     lead: {
         vehicle: {
             store: 'lead/vehicle/store',

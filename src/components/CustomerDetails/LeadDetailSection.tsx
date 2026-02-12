@@ -1,16 +1,17 @@
 import { Card } from "../Layout/ui/Card"
 import { Tabs } from "../Layout/ui/Tabs"
-import { Button } from "../Layout/ui/Button"
 import { LeadDetailActivity } from "./LeadDetailSection/Activity"
-import { FileText } from "lucide-react";
+import { LeadDocumentUploader } from "./LeadDetailSection/Document";
 import { LeadDetailView } from "./LeadDetailSection/View";
 
 interface LeadSectionDetailProp {
+    leadUuid: string;
     activeTab: string;
     onActiveTab: (activeTab: string) => void;
 }
 
 export const LeadDetailSection: React.FC<LeadSectionDetailProp> = ({
+    leadUuid,
     activeTab,
     onActiveTab
 }) => {
@@ -26,7 +27,7 @@ export const LeadDetailSection: React.FC<LeadSectionDetailProp> = ({
                                 tabs={[
                                     { id: 'view', label: 'View' },
                                     { id: 'activity', label: 'Activity' },
-                                    { id: 'notes', label: 'Notes' },
+                                    { id: 'documents', label: 'Documents' },
                                     { id: 'policies', label: 'Policies' }
                                 ]}
                                 activeTab={activeTab}
@@ -41,14 +42,9 @@ export const LeadDetailSection: React.FC<LeadSectionDetailProp> = ({
 
                     {activeTab === 'view' && <LeadDetailView />}
                     {activeTab === 'activity' && <LeadDetailActivity />}
+                    {activeTab === 'documents' && <LeadDocumentUploader lead_uuid={leadUuid} />}
 
-                    {activeTab === 'notes' && <div className="text-center py-12 text-gray-500">
-                        <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                        <p>No notes yet. Start typing to add one.</p>
-                        <Button variant="secondary" className="mt-4">
-                            Add Note
-                        </Button>
-                    </div>}
+
                 </div>
             </Card>
         </div>

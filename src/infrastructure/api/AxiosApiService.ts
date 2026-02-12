@@ -85,6 +85,16 @@ export class AxiosApiService implements ApiService {
         return response.data
     }
 
+    // multipart/form-data POST
+    async postForm<T>(
+        url: string,
+        data: FormData,
+        config?: AxiosRequestConfig
+    ): Promise<T> {
+        const response = await this.client.post<T>(url, data, config)
+        return response.data
+    }
+
     async put<T>(
         url: string,
         data?: unknown,

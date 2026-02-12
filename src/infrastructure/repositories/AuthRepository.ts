@@ -20,7 +20,7 @@ export class AuthRepository implements AuthContract {
         return new User(
             user.uuid,
             user.name,
-            user.initals,
+            user.initials,
             user.email,
             user.status,
             user.role_slug,

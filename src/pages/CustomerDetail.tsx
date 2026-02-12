@@ -137,6 +137,7 @@ export function CustomerDetails() {
     <LeadDetailSection
       activeTab={activeTab}
       onActiveTab={setActiveTab}
+      leadUuid={rowUuid}
     />
   </div>;
 }
