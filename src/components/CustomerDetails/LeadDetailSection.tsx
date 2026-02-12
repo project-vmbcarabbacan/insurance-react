@@ -1,6 +1,7 @@
 import { Card } from "../Layout/ui/Card"
 import { Tabs } from "../Layout/ui/Tabs"
 import { LeadDetailActivity } from "./LeadDetailSection/Activity"
+import { LeadAudits } from "./LeadDetailSection/Audit";
 import { LeadDocumentUploader } from "./LeadDetailSection/Document";
 import { LeadDetailView } from "./LeadDetailSection/View";
 
@@ -18,7 +19,7 @@ export const LeadDetailSection: React.FC<LeadSectionDetailProp> = ({
 
 
     return (
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6" id="lead-detail-section">
             <Card noPadding className="overflow-hidden">
                 <div className="px-6 pt-2">
                     <div className="flex items-center justify-between">
@@ -28,7 +29,8 @@ export const LeadDetailSection: React.FC<LeadSectionDetailProp> = ({
                                     { id: 'view', label: 'View' },
                                     { id: 'activity', label: 'Activity' },
                                     { id: 'documents', label: 'Documents' },
-                                    { id: 'policies', label: 'Policies' }
+                                    { id: 'policies', label: 'Policies' },
+                                    { id: 'audits', label: 'Audits' }
                                 ]}
                                 activeTab={activeTab}
                                 onChange={onActiveTab}
@@ -43,6 +45,7 @@ export const LeadDetailSection: React.FC<LeadSectionDetailProp> = ({
                     {activeTab === 'view' && <LeadDetailView />}
                     {activeTab === 'activity' && <LeadDetailActivity />}
                     {activeTab === 'documents' && <LeadDocumentUploader lead_uuid={leadUuid} />}
+                    {activeTab === 'audits' && <LeadAudits lead_uuid={leadUuid} />}
 
 
                 </div>

@@ -17,6 +17,8 @@ import { GetLeadActivity } from '../app/stores/slices/leadSlice';
 import { ViewVehicleLeadProduct } from '../app/stores/slices/vehicleSlice';
 import { ViewHealthLeadProduct } from '../app/stores/slices/healthSlice';
 import { AllDocumentsByLead } from '../app/stores/slices/documentSlice';
+import type { AuditForm } from '../core/interfaces/Audit';
+import { getAudits } from '../app/stores/slices/auditSlice';
 
 export function CustomerDetails() {
   const navigate = useNavigate();
@@ -75,6 +77,12 @@ export function CustomerDetails() {
       }
     } else if (activeTab === 'documents') {
       dispatch(AllDocumentsByLead(rowUuid))
+    } else if (activeTab === 'audits') {
+      dispatch(getAudits({
+        page: 1,
+        morph: 'lead',
+        uuid: rowUuid
+      } as AuditForm))
     }
 
   }, [rowUuid, product, activeTab, dispatch])

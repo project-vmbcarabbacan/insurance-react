@@ -1,5 +1,8 @@
 export const API_URL = {
     csrf: 'sanctum/csrf-cookie',
+    audit: {
+        fetch: 'audits/fetch'
+    },
     auth: {
         login: 'authentication/spa/login',
         logout: 'authentication/spa/logout'

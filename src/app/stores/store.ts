@@ -8,9 +8,11 @@ import leadVehicleReducer from './slices/vehicleSlice'
 import leadHealthReducer from './slices/healthSlice'
 import leadReducer from './slices/leadSlice'
 import documentReducer from './slices/documentSlice'
+import auditReducer from './slices/auditSlice'
 
 export const store = configureStore({
   reducer: {
+    audit: auditReducer,
     auth: authReducer,
     user: userReducer,
     team: teamReducer,

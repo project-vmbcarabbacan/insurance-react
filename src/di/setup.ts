@@ -13,6 +13,7 @@ import { VehicleRepository } from "../infrastructure/repositories/VehicleReposit
 import { HealthRepository } from "../infrastructure/repositories/HealthRepository.ts";
 import { LeadRepository } from "../infrastructure/repositories/LeadRepository.ts";
 import { DocumentRepository } from "../infrastructure/repositories/DocumentRepository.ts";
+import { AuditRepository } from "../infrastructure/repositories/AuditRepository.ts";
 
 /*---------------------*usecases*---------------------*/
 /* auth */
@@ -57,6 +58,7 @@ import { VehiclePrerequisiteService } from "../app/services/VehiclePrerequisiteS
 import { HealthPrerequisiteService } from "../app/services/HealthPrerequisiteService.ts";
 import { LeadService } from "../app/services/LeadService.ts";
 import { DocumentService } from "../app/services/DocumentService.ts";
+import { AuditService } from "../app/services/AuditService.ts";
 
 export function setup() {
     /**
@@ -75,6 +77,7 @@ export function setup() {
     const healthRepository = new HealthRepository(api)
     const leadRepository = new LeadRepository(api)
     const documentRepository = new DocumentRepository(api)
+    const auditRepository = new AuditRepository(api)
 
     /*---------------------*usecases*---------------------*/
 
@@ -126,6 +129,7 @@ export function setup() {
     const healthPrerequisiteService = new HealthPrerequisiteService(settingRepository)
     const leadService = new LeadService(leadRepository)
     const documentService = new DocumentService(documentRepository)
+    const auditService = new AuditService(auditRepository)
 
     /**
      * CONTAINERIZATION
@@ -143,6 +147,7 @@ export function setup() {
     container.register(TOKENS.HealthRepository, healthRepository)
     container.register(TOKENS.LeadRepository, leadRepository)
     container.register(TOKENS.DocumentRepository, documentRepository)
+    container.register(TOKENS.AuditRepository, auditRepository)
 
     /*---------------------*usecases*---------------------*/
 
@@ -194,5 +199,6 @@ export function setup() {
     container.register(TOKENS.HealthPrerequisiteService, healthPrerequisiteService)
     container.register(TOKENS.LeadService, leadService)
     container.register(TOKENS.DocumentService, documentService)
+    container.register(TOKENS.AuditService, auditService)
 
 }
