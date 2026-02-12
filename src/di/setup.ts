@@ -12,6 +12,7 @@ import { CustomerRepository } from "../infrastructure/repositories/CustomerRepos
 import { VehicleRepository } from "../infrastructure/repositories/VehicleRepository.ts";
 import { HealthRepository } from "../infrastructure/repositories/HealthRepository.ts";
 import { LeadRepository } from "../infrastructure/repositories/LeadRepository.ts";
+import { DocumentRepository } from "../infrastructure/repositories/DocumentRepository.ts";
 
 /*---------------------*usecases*---------------------*/
 /* auth */
@@ -55,6 +56,7 @@ import { FindHealthLeadProductUseCase } from "../app/usecases/leads/healths/Find
 import { VehiclePrerequisiteService } from "../app/services/VehiclePrerequisiteService.ts";
 import { HealthPrerequisiteService } from "../app/services/HealthPrerequisiteService.ts";
 import { LeadService } from "../app/services/LeadService.ts";
+import { DocumentService } from "../app/services/DocumentService.ts";
 
 export function setup() {
     /**
@@ -72,6 +74,7 @@ export function setup() {
     const vehicleRepository = new VehicleRepository(api)
     const healthRepository = new HealthRepository(api)
     const leadRepository = new LeadRepository(api)
+    const documentRepository = new DocumentRepository(api)
 
     /*---------------------*usecases*---------------------*/
 
@@ -122,6 +125,7 @@ export function setup() {
     const vehiclePrerequisiteService = new VehiclePrerequisiteService(settingRepository)
     const healthPrerequisiteService = new HealthPrerequisiteService(settingRepository)
     const leadService = new LeadService(leadRepository)
+    const documentService = new DocumentService(documentRepository)
 
     /**
      * CONTAINERIZATION
@@ -138,6 +142,7 @@ export function setup() {
     container.register(TOKENS.VehicleRepository, vehicleRepository)
     container.register(TOKENS.HealthRepository, healthRepository)
     container.register(TOKENS.LeadRepository, leadRepository)
+    container.register(TOKENS.DocumentRepository, documentRepository)
 
     /*---------------------*usecases*---------------------*/
 
@@ -188,5 +193,6 @@ export function setup() {
     container.register(TOKENS.VehiclePrerequisiteService, vehiclePrerequisiteService)
     container.register(TOKENS.HealthPrerequisiteService, healthPrerequisiteService)
     container.register(TOKENS.LeadService, leadService)
+    container.register(TOKENS.DocumentService, documentService)
 
 }

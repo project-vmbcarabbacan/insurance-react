@@ -20,7 +20,10 @@ export const API_URL = {
         details: 'customers/details'
     },
     document: {
-        upload: 'documents/upload'
+        upload: 'documents/upload',
+        all: 'documents/all',
+        delete: 'documents/delete',
+        updateType: 'documents/update/type',
     },
     lead: {
         vehicle: {

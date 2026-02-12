@@ -16,6 +16,7 @@ import type { LeadDetail } from '../core/interfaces/Lead';
 import { GetLeadActivity } from '../app/stores/slices/leadSlice';
 import { ViewVehicleLeadProduct } from '../app/stores/slices/vehicleSlice';
 import { ViewHealthLeadProduct } from '../app/stores/slices/healthSlice';
+import { AllDocumentsByLead } from '../app/stores/slices/documentSlice';
 
 export function CustomerDetails() {
   const navigate = useNavigate();
@@ -63,14 +64,17 @@ export function CustomerDetails() {
   useEffect(() => {
     if (!rowUuid) return
 
-    if (activeTab === 'activity')
+    if (activeTab === 'activity') {
       dispatch(GetLeadActivity(rowUuid))
+    }
     else if (activeTab === 'view') {
       if (product === 'vehicle') {
         dispatch(ViewVehicleLeadProduct(rowUuid))
       } else if (product === 'health') {
         dispatch(ViewHealthLeadProduct(rowUuid))
       }
+    } else if (activeTab === 'documents') {
+      dispatch(AllDocumentsByLead(rowUuid))
     }
 
   }, [rowUuid, product, activeTab, dispatch])
@@ -128,6 +132,7 @@ export function CustomerDetails() {
 
       {/* Right Column: Content */}
       <LeadSection
+        rowUuid={rowUuid}
         customer_id={customer_id}
         handleRowClick={handleRowClick}
         handleViewProudct={handleRowClick}

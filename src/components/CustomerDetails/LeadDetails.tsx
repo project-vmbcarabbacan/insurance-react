@@ -5,6 +5,7 @@ import type { LeadDetail } from '../../core/interfaces/Lead';
 import { statusColors } from '../../core/utils/leadStatusColor';
 
 interface LeadDetailsProps {
+    rowUuid: string
     leads: LeadDetail[] | null;
     onView?: (lead: LeadDetail) => void;
     onEdit?: (lead: LeadDetail) => void;
@@ -21,6 +22,7 @@ const formatStatus = (status: string) =>
 /* ---------------- Component ---------------- */
 
 const LeadDetails: React.FC<LeadDetailsProps> = ({
+    rowUuid,
     leads,
     onView,
     onEdit,
@@ -39,7 +41,10 @@ const LeadDetails: React.FC<LeadDetailsProps> = ({
             {leads.map((lead) => (
                 <li
                     key={lead.uuid}
-                    className="flex items-start justify-between rounded-lg border border-gray-200 dark:border-gray-700 p-3 bg-white dark:bg-gray-900 cursor-pointer"
+                    className={`
+                        flex items-start justify-between rounded-lg border border-gray-200 dark:border-gray-700 p-3 cursor-pointer
+                        ${rowUuid === lead.uuid ? 'bg-[aliceblue]' : 'bg-white dark:bg-gray-900'}
+                        `}
                     onClick={() => onRowClick(lead)}
                 >
                     {/* Left */}

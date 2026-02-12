@@ -11,6 +11,7 @@ export const TOKENS = {
     VehicleRepository: "VehicleRepository",
     HealthRepository: "HealthRepository",
     LeadRepository: "LeadRepository",
+    DocumentRepository: "DocumentRepository",
 
     /***USECASES***/
 
@@ -59,5 +60,6 @@ export const TOKENS = {
     VehiclePrerequisiteService: 'VehiclePrerequisiteService',
     HealthPrerequisiteService: 'HealthPrerequisiteService',
     LeadService: 'LeadService',
+    DocumentService: 'DocumentService',
 
 }

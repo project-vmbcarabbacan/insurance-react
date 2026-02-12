@@ -8,6 +8,12 @@ import App from './App.tsx'
 
 setup();
 
+// console.log = () => { }
+// console.warn = () => { }
+// console.error = () => { }
+// console.info = () => { }
+// console.debug = () => { }
+
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>

@@ -1,9 +1,11 @@
-import React from "react"
+import React, { useCallback, useEffect, useRef } from "react"
 import { useDropzone } from "react-dropzone"
 import { useAppDispatch, useAppSelector } from "../../../app/stores/hooks"
 import { v4 as uuidv4 } from "uuid"
 import * as LucideIcons from "lucide-react"
-import { addFile, removeFile, uploadMultipleDocuments } from "../../../app/stores/slices/documentSlice"
+import { addFile, AllDocumentsByLead, DeleteDocument, removeFile, UpdateType, uploadMultipleDocuments } from "../../../app/stores/slices/documentSlice"
+import { DocumentsTable } from "./Document/DocumentTable"
+import type { DocumentData, UpdateDocumentType } from "../../../core/interfaces/Document"
 
 const MAX_SIZE = 5 * 1024 * 1024 // 5MB
 
@@ -16,8 +18,36 @@ export const LeadDocumentUploader: React.FC<LeadDocumentUploadProp> = ({
 }) => {
     const dispatch = useAppDispatch()
     const files = useAppSelector(state => state.document.files)
+    const documents = useAppSelector(state => state.document.documents)
+    const removalTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({})
 
-    const onDrop = (acceptedFiles: File[]) => {
+    const [rows, setRows] = React.useState<DocumentData[]>(documents)
+
+    React.useEffect(() => {
+        setRows(documents)
+    }, [documents])
+
+    useEffect(() => {
+        files.forEach((file) => {
+            // If file is successfully uploaded and no timer exists
+            if (file.progress === 100 && file.status === "success" && !removalTimers.current[file.uuid]) {
+                // Start a timer to remove the file after 2.5s
+                removalTimers.current[file.uuid] = setTimeout(() => {
+                    dispatch(removeFile(file.uuid))
+                    // Clean up the timer
+                    delete removalTimers.current[file.uuid]
+                }, 2500)
+            }
+        })
+
+        // Cleanup function on unmount: clear all active timers
+        return () => {
+            Object.values(removalTimers.current).forEach(clearTimeout)
+            removalTimers.current = {}
+        }
+    }, [files, dispatch])
+
+    const onDrop = async (acceptedFiles: File[]) => {
         const formData = new FormData()
 
         acceptedFiles.forEach((file) => {
@@ -46,8 +76,28 @@ export const LeadDocumentUploader: React.FC<LeadDocumentUploadProp> = ({
         formData.append("lead_uuid", lead_uuid)
 
         // Dispatch a new thunk to upload multiple files at once
-        dispatch(uploadMultipleDocuments(formData))
+        await dispatch(uploadMultipleDocuments(formData))
+        dispatch(AllDocumentsByLead(lead_uuid))
     }
+
+    const HandleType = useCallback(
+        (uuid: string, documentTypeId: number) => {
+            const payload = {
+                lead_uuid,
+                document_uuid: uuid,
+                document_type_id: documentTypeId
+            } as UpdateDocumentType
+
+            dispatch(UpdateType(payload))
+        },
+        [dispatch, lead_uuid]
+    )
+
+    const handleDelete = React.useCallback((uuid: string) => {
+        setRows((prev) => prev.filter((doc) => doc.uuid !== uuid))
+
+        dispatch(DeleteDocument(uuid))
+    }, [dispatch])
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
@@ -131,6 +181,12 @@ export const LeadDocumentUploader: React.FC<LeadDocumentUploadProp> = ({
                     </div>
                 ))}
             </div>
+
+            <DocumentsTable
+                documents={rows}
+                onChange={HandleType}
+                onDelete={handleDelete}
+            />
         </div>
     )
 }

@@ -15,12 +15,14 @@ import { Search } from "lucide-react"
 
 interface LeadActionProp {
     customer_id: string
+    rowUuid: string
     handleRowClick: (lead: LeadDetail) => void;
     handleViewProudct: (lead: LeadDetail) => void
 }
 
 export const LeadSection: React.FC<LeadActionProp> = ({
     customer_id,
+    rowUuid,
     handleRowClick,
     handleViewProudct
 }) => {
@@ -161,6 +163,7 @@ export const LeadSection: React.FC<LeadActionProp> = ({
                         activeTab === 'leads' && (
                             <LeadDetails
                                 leads={leads}
+                                rowUuid={rowUuid}
                                 onView={handleView}
                                 onEdit={handleEditProduct}
                                 onActivity={handleAddLeadActivity}

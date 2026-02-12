@@ -1,9 +1,11 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit"
 import { container } from "../../../di/container"
-import type { AxiosApiService } from "../../../infrastructure/api/AxiosApiService"
 import { TOKENS } from "../../../di/tokens"
 import { API_URL } from "../../../infrastructure/api/Urls"
 import type { AppDispatch, RootState } from "../store"
+import { DocumentService } from "../../services/DocumentService"
+import type { LeadDocumentResponse } from "../../../infrastructure/dtos/DocumentResponse"
+import type { DocumentData, UpdateDocumentType } from "../../../core/interfaces/Document"
 
 interface UploadFile {
     uuid: string
@@ -16,78 +18,57 @@ interface UploadFile {
 
 interface DocumentState {
     files: UploadFile[]
+    documents: DocumentData[]
 }
 
 const initialState: DocumentState = {
-    files: []
+    files: [],
+    documents: []
 }
-
-export const uploadDocument = createAsyncThunk(
-    API_URL.document.upload,
-    async (fileObj: UploadFile, { dispatch }) => {
-        const formData = new FormData()
-        formData.append("documents[]", fileObj.file)
-        formData.append("lead_uuid", fileObj.lead_uuid)
-
-        const api = container.resolve<AxiosApiService>(TOKENS.ApiService)
-
-        await api.postForm(
-            API_URL.document.upload,
-            formData,
-            {
-                onUploadProgress: (progressEvent) => {
-                    const percent = Math.round(
-                        (progressEvent.loaded * 100) /
-                        (progressEvent.total || 1)
-                    )
-
-                    dispatch(
-                        updateProgress({
-                            uuid: fileObj.uuid,
-                            progress: percent,
-                        })
-                    )
-                },
-            }
-        )
-
-        return fileObj.uuid
-    }
-)
 
 export const uploadMultipleDocuments = createAsyncThunk<
     void,
     FormData,
     { dispatch: AppDispatch; state: RootState }
 >(
-    "document/uploadMultipleDocuments",
+    API_URL.document.upload,
     async (formData, { dispatch, getState }) => {
-        const api = container.resolve<AxiosApiService>(TOKENS.ApiService)
+        const service = container.resolve<DocumentService>(TOKENS.DocumentService)
 
-        await api.postForm(API_URL.document.upload, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-            onUploadProgress: (event) => {
-                const percent = Math.round(
-                    (event.loaded * 100) / (event.total || 1)
-                )
-
-                // Type-safe access to state
-                const state = getState()
-                const files = state.document.files
-
-                files.forEach((f) =>
-                    dispatch(
-                        updateProgress({ uuid: f.uuid, progress: percent })
-                    )
-                )
-            }
-        })
+        await service.uploadDocuments(formData, (percent) => {
+            const files = getState().document.files;
+            files.forEach((f) =>
+                dispatch(updateProgress({ uuid: f.uuid, progress: percent }))
+            );
+        });
 
         // Mark all files as success
-        const state = getState()
-        state.document.files.forEach((f) =>
-            dispatch(markFileSuccess(f.uuid))
-        )
+        const state = getState();
+        state.document.files.forEach((f) => dispatch(markFileSuccess(f.uuid)));
+    }
+)
+
+export const AllDocumentsByLead = createAsyncThunk(
+    API_URL.document.all,
+    async (lead_uuid: string) => {
+        const document = container.resolve<DocumentService>(TOKENS.DocumentService)
+        return await document.documentsByLead(lead_uuid)
+    }
+)
+
+export const UpdateType = createAsyncThunk(
+    API_URL.document.updateType,
+    async (data: UpdateDocumentType) => {
+        const document = container.resolve<DocumentService>(TOKENS.DocumentService)
+        return await document.updateType(data)
+    }
+)
+
+export const DeleteDocument = createAsyncThunk(
+    API_URL.document.delete,
+    async (document_uuid: string) => {
+        const document = container.resolve<DocumentService>(TOKENS.DocumentService)
+        return await document.deleteDocument(document_uuid)
     }
 )
 
@@ -117,9 +98,8 @@ const documentSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        builder.addCase(uploadDocument.fulfilled, (state, action) => {
-            const file = state.files.find(f => f.uuid === action.payload)
-            if (file) file.status = "success"
+        builder.addCase(AllDocumentsByLead.fulfilled, (state: DocumentState, action: PayloadAction<LeadDocumentResponse>) => {
+            state.documents = action.payload.data.documents ?? []
         })
     }
 })
