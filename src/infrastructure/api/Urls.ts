@@ -61,6 +61,14 @@ export const API_URL = {
         },
         health: {
             prerequisites: 'setting/health/prerequisites',
+        },
+        provider: {
+            pagination: 'setting/providers/paginate',
+            search: 'setting/providers/search',
+            store: 'setting/providers/store',
+            update: 'setting/providers/update',
+            status: 'setting/providers/status',
+            active: 'setting/providers/active',
         }
     }
 }

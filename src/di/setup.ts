@@ -14,6 +14,7 @@ import { HealthRepository } from "../infrastructure/repositories/HealthRepositor
 import { LeadRepository } from "../infrastructure/repositories/LeadRepository.ts";
 import { DocumentRepository } from "../infrastructure/repositories/DocumentRepository.ts";
 import { AuditRepository } from "../infrastructure/repositories/AuditRepository.ts";
+import { PolicyProviderRepository } from "../infrastructure/repositories/PolicyProviderRepository.ts";
 
 /*---------------------*usecases*---------------------*/
 /* auth */
@@ -59,6 +60,7 @@ import { HealthPrerequisiteService } from "../app/services/HealthPrerequisiteSer
 import { LeadService } from "../app/services/LeadService.ts";
 import { DocumentService } from "../app/services/DocumentService.ts";
 import { AuditService } from "../app/services/AuditService.ts";
+import { PolicyProviderService } from "../app/services/PolicyProviderService.ts";
 
 export function setup() {
     /**
@@ -78,6 +80,7 @@ export function setup() {
     const leadRepository = new LeadRepository(api)
     const documentRepository = new DocumentRepository(api)
     const auditRepository = new AuditRepository(api)
+    const policyProviderRepository = new PolicyProviderRepository(api)
 
     /*---------------------*usecases*---------------------*/
 
@@ -130,6 +133,7 @@ export function setup() {
     const leadService = new LeadService(leadRepository)
     const documentService = new DocumentService(documentRepository)
     const auditService = new AuditService(auditRepository)
+    const policyProviderService = new PolicyProviderService(policyProviderRepository)
 
     /**
      * CONTAINERIZATION
@@ -148,6 +152,7 @@ export function setup() {
     container.register(TOKENS.LeadRepository, leadRepository)
     container.register(TOKENS.DocumentRepository, documentRepository)
     container.register(TOKENS.AuditRepository, auditRepository)
+    container.register(TOKENS.PolicyProviderRepository, policyProviderRepository)
 
     /*---------------------*usecases*---------------------*/
 
@@ -200,5 +205,6 @@ export function setup() {
     container.register(TOKENS.LeadService, leadService)
     container.register(TOKENS.DocumentService, documentService)
     container.register(TOKENS.AuditService, auditService)
+    container.register(TOKENS.PolicyProviderService, policyProviderService)
 
 }

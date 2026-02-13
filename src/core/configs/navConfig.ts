@@ -1,17 +1,14 @@
 import {
     LayoutDashboard,
     Users,
-    Trello,
     LifeBuoy,
     Settings,
-    PieChart,
-    UserPlus,
-    Building2,
     Ticket,
     MessageSquare,
     Users2Icon
 } from 'lucide-react';
 import type { NavItem } from '../interfaces/NavItem';
+import { PolicyProviderIcon } from '../../components/Layout/icons/PolicyProviderIcon';
 
 /**
  * Sidebar navigation configuration
@@ -80,5 +77,16 @@ export const navItems: NavItem[] = [
         label: 'Manage Teams',
         path: '/teams'
     },
+    {
+        icon: Settings,
+        label: 'Settings',
+        children: [
+            {
+                label: 'Provider',
+                path: '/setting/providers',
+                icon: PolicyProviderIcon
+            },
+        ]
+    }
 
 ];

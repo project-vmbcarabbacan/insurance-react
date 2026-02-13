@@ -13,6 +13,7 @@ export const TOKENS = {
     LeadRepository: "LeadRepository",
     DocumentRepository: "DocumentRepository",
     AuditRepository: "AuditRepository",
+    PolicyProviderRepository: "PolicyProviderRepository",
 
     /***USECASES***/
 
@@ -63,5 +64,6 @@ export const TOKENS = {
     LeadService: 'LeadService',
     DocumentService: 'DocumentService',
     AuditService: 'AuditService',
+    PolicyProviderService: 'PolicyProviderService',
 
 }

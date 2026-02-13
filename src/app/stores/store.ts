@@ -9,6 +9,7 @@ import leadHealthReducer from './slices/healthSlice'
 import leadReducer from './slices/leadSlice'
 import documentReducer from './slices/documentSlice'
 import auditReducer from './slices/auditSlice'
+import policyProviderReducer from './slices/policyProviderSlice'
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
     lead_vehicle: leadVehicleReducer,
     lead_health: leadHealthReducer,
     document: documentReducer,
+    policy_provider: policyProviderReducer,
   },
 })
 

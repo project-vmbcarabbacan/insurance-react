@@ -14,6 +14,9 @@ import type { VehiclePrerequisiteService } from '../../services/VehiclePrerequis
 import type { HealthPrerequisiteService } from '../../services/HealthPrerequisiteService'
 import type { ManageCustomerDetailUseCase } from '../../usecases/settings/ManageCustomerDetailUseCase'
 import type { ManageLeadActivityUseCase } from '../../usecases/settings/ManageLeadActivityUseCase'
+import type { PolicyProviderService } from '../../services/PolicyProviderService'
+import type { PolicyActiveResponse, PolicyPaginationResponse } from '../../../core/interfaces/Policy'
+import { PolicyPaginate } from './policyProviderSlice'
 
 interface SettingState {
     roles: SlugName[]
@@ -43,6 +46,7 @@ interface SettingState {
     marital_statuses: LabelValue[]
     communication_preferences: LabelValue[]
     activity_responses: LabelValue[]
+    policy_providers: LabelValue[]
 }
 
 const initialState: SettingState = {
@@ -73,6 +77,7 @@ const initialState: SettingState = {
     marital_statuses: [],
     communication_preferences: [],
     activity_responses: [],
+    policy_providers: []
 }
 
 /* pages */
@@ -166,6 +171,15 @@ export const SettingHealthPrerequisites = createAsyncThunk(
     }
 )
 
+/* Policy Providers */
+export const SettingPolicyProviders = createAsyncThunk(
+    API_URL.setting.provider.active,
+    async () => {
+        const setting = container.resolve<PolicyProviderService>(TOKENS.PolicyProviderService)
+        return setting.active()
+    }
+)
+
 const settingSlice = createSlice({
     name: 'setting',
     initialState,
@@ -177,6 +191,9 @@ const settingSlice = createSlice({
     },
     extraReducers: builder => {
         builder
+            .addCase(PolicyPaginate.fulfilled, (state: SettingState, action: PayloadAction<PolicyPaginationResponse>) => {
+                state.statuses = action.payload.data.statuses
+            })
             .addCase(SettingManageTeam.fulfilled, (state: SettingState, action: PayloadAction<SettingManageTeamResponse>) => {
                 state.roles = action.payload.data.roles
                 state.statuses = action.payload.data.statuses
@@ -236,6 +253,9 @@ const settingSlice = createSlice({
                 state.emirates = action.payload.data.emirates
                 state.medical_conditions = action.payload.data.medical_conditions
                 state.marital_statuses = action.payload.data.marital_statuses
+            })
+            .addCase(SettingPolicyProviders.fulfilled, (state: SettingState, action: PayloadAction<PolicyActiveResponse>) => {
+                state.policy_providers = action.payload.data.policy_providers
             })
     }
 })
