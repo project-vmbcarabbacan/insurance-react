@@ -1,17 +1,21 @@
 import type { ApiService } from "../api/ApiService";
 import { API_URL } from "../api/Urls";
 import type { SettingContract } from "../../domain/contracts/SettingContract";
-import type { SettingDetailCustomerResponse, SettingInsuranceProductResponse, SettingLeadActivityPrerequisiteResponse, SettingLeadHealthPrerequisitesResponse, SettingLeadVehiclePrerequisitesResponse, SettingManageCustomerResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse, SettingVehiclePrerequisitesResponse } from "../dtos/SettingResponse";
+import type { SettingDetailCustomerResponse, SettingInsuranceProductResponse, SettingLeadActivityPrerequisiteResponse, SettingLeadHealthPrerequisitesResponse, SettingLeadVehiclePrerequisitesResponse, SettingManageCustomerResponse, SettingManagePlansResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse, SettingVehiclePrerequisitesResponse } from "../dtos/SettingResponse";
 
 export class SettingRepository implements SettingContract {
     constructor(private api: ApiService) { }
 
     async manageTeams(): Promise<SettingManageTeamResponse> {
-        return await this.api.get<SettingManageTeamResponse>(`/${API_URL.setting.manageTeams}`)
+        return await this.api.get<SettingManageTeamResponse>(`/${API_URL.setting.manage.teams}`)
     }
 
     async manageCustomers(): Promise<SettingManageCustomerResponse> {
-        return await this.api.get<SettingManageCustomerResponse>(`/${API_URL.setting.manageCustomers}`)
+        return await this.api.get<SettingManageCustomerResponse>(`/${API_URL.setting.manage.customers}`)
+    }
+
+    async managePlans(): Promise<SettingManagePlansResponse> {
+        return await this.api.get<SettingManagePlansResponse>(`/${API_URL.setting.manage.plans}`)
     }
 
     async insuranceProduct(): Promise<SettingInsuranceProductResponse> {

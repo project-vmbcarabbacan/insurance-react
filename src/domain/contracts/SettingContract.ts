@@ -1,8 +1,9 @@
-import type { SettingDetailCustomerResponse, SettingInsuranceProductResponse, SettingLeadActivityPrerequisiteResponse, SettingLeadHealthPrerequisitesResponse, SettingLeadVehiclePrerequisitesResponse, SettingManageCustomerResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse, SettingVehiclePrerequisitesResponse } from "../../infrastructure/dtos/SettingResponse";
+import type { SettingDetailCustomerResponse, SettingInsuranceProductResponse, SettingLeadActivityPrerequisiteResponse, SettingLeadHealthPrerequisitesResponse, SettingLeadVehiclePrerequisitesResponse, SettingManageCustomerResponse, SettingManagePlansResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse, SettingVehiclePrerequisitesResponse } from "../../infrastructure/dtos/SettingResponse";
 
 export interface SettingContract {
     manageTeams(): Promise<SettingManageTeamResponse>
     manageCustomers(): Promise<SettingManageCustomerResponse>
+    managePlans(): Promise<SettingManagePlansResponse>
     insuranceProduct(): Promise<SettingInsuranceProductResponse>
     upsertCustomer(): Promise<SettingUpsertCustomerResponse>
     detailCustomer(): Promise<SettingDetailCustomerResponse>

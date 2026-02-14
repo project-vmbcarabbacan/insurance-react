@@ -28,3 +28,5 @@ export const SelectMedicalConditions = (state: RootState) => state.setting.medic
 export const SelectMaritalStatuses = (state: RootState) => state.setting.marital_statuses.map(setting => new LabelValue(setting.value, setting.label))
 export const SelectCommunicationPreference = (state: RootState) => state.setting.communication_preferences.map(setting => new LabelValue(setting.value, setting.label))
 export const SelectActivityResponse = (state: RootState) => state.setting.activity_responses.map(setting => new LabelValue(setting.value, setting.label))
+export const selectPolicyProvider = (state: RootState) => state.setting.policy_providers.map(setting => new LabelValue(setting.value, setting.label))
+export const selectCurrencies = (state: RootState) => state.setting.currencies.map(setting => new LabelValue(setting.value, setting.label))

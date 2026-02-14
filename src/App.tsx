@@ -13,6 +13,7 @@ import { Customers } from './pages/Customers';
 import { VehicleInsurancePage } from './pages/Products/VehiclePage';
 import { HealthInsurancePage } from './pages/Products/HealthPage';
 import { CustomerDetails } from './pages/CustomerDetail';
+import { Plans } from './pages/Settings/Plans';
 
 // const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 //   return <MainLayout>{children}</MainLayout>
@@ -45,6 +46,8 @@ function App() {
         <Route path="leads/vehicle/update/:customer_id/:lead_id" element={<VehicleInsurancePage />} />
         <Route path="leads/health/create/:customer_id" element={<HealthInsurancePage />} />
         <Route path="leads/health/update/:customer_id/:lead_id" element={<HealthInsurancePage />} />
+        {/* settings */}
+        <Route path="setting/plans" element={<Plans />} />
       </Route>
 
     </Routes>

@@ -4,7 +4,7 @@ import { API_URL } from '../../../infrastructure/api/Urls'
 import { ManageTeamUseCase } from '../../usecases/settings/ManageTeamUseCase'
 import { TOKENS } from '../../../di/tokens'
 import { container } from '../../../di/container'
-import type { SettingDetailCustomerResponse, SettingInsuranceProductResponse, SettingLeadActivityPrerequisiteResponse, SettingLeadHealthPrerequisitesResponse, SettingLeadVehiclePrerequisitesResponse, SettingManageCustomerResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse, SettingVehiclePrerequisitesResponse } from '../../../infrastructure/dtos/SettingResponse'
+import type { SettingDetailCustomerResponse, SettingInsuranceProductResponse, SettingLeadActivityPrerequisiteResponse, SettingLeadHealthPrerequisitesResponse, SettingLeadVehiclePrerequisitesResponse, SettingManageCustomerResponse, SettingManagePlansResponse, SettingManageTeamResponse, SettingUpsertCustomerResponse, SettingVehiclePrerequisitesResponse } from '../../../infrastructure/dtos/SettingResponse'
 import type { LabelValue } from '../../../core/interfaces/LabelValue'
 import type { InsuranceProductUseCase } from '../../usecases/settings/InsuranceProductUseCase'
 import type { ManageCustomerUseCase } from '../../usecases/settings/ManageCustomerUseCase'
@@ -14,6 +14,9 @@ import type { VehiclePrerequisiteService } from '../../services/VehiclePrerequis
 import type { HealthPrerequisiteService } from '../../services/HealthPrerequisiteService'
 import type { ManageCustomerDetailUseCase } from '../../usecases/settings/ManageCustomerDetailUseCase'
 import type { ManageLeadActivityUseCase } from '../../usecases/settings/ManageLeadActivityUseCase'
+import type { ManagePlanUseCase } from '../../usecases/settings/ManagePlanUseCase'
+import { AddPlan, UpdatePlan } from './planSlice'
+import type { PlanSearchResponse } from '../../../core/interfaces/Plan'
 
 interface SettingState {
     roles: SlugName[]
@@ -43,6 +46,8 @@ interface SettingState {
     marital_statuses: LabelValue[]
     communication_preferences: LabelValue[]
     activity_responses: LabelValue[]
+    policy_providers: LabelValue[]
+    currencies: LabelValue[]
 }
 
 const initialState: SettingState = {
@@ -73,11 +78,13 @@ const initialState: SettingState = {
     marital_statuses: [],
     communication_preferences: [],
     activity_responses: [],
+    policy_providers: [],
+    currencies: [],
 }
 
 /* pages */
 export const SettingManageTeam = createAsyncThunk(
-    API_URL.setting.manageTeams,
+    API_URL.setting.manage.teams,
     async () => {
         const setting = container.resolve<ManageTeamUseCase>(TOKENS.SettingManageTeam)
         return setting.execute()
@@ -85,9 +92,17 @@ export const SettingManageTeam = createAsyncThunk(
 )
 
 export const ManageCustomer = createAsyncThunk(
-    API_URL.setting.manageCustomers,
+    API_URL.setting.manage.customers,
     async () => {
         const setting = container.resolve<ManageCustomerUseCase>(TOKENS.ManageCustomerUseCase)
+        return setting.execute()
+    }
+)
+
+export const ManagePlan = createAsyncThunk(
+    API_URL.setting.manage.plans,
+    async () => {
+        const setting = container.resolve<ManagePlanUseCase>(TOKENS.ManagePlanUseCase)
         return setting.execute()
     }
 )
@@ -186,6 +201,11 @@ const settingSlice = createSlice({
                 state.insurance_products = action.payload.data.products
                 state.statuses = action.payload.data.statuses
             })
+            .addCase(ManagePlan.fulfilled, (state: SettingState, action: PayloadAction<SettingManagePlansResponse>) => {
+                state.insurance_products = action.payload.data.products
+                state.statuses = action.payload.data.statuses
+                state.policy_providers = action.payload.data.policy_providers
+            })
             .addCase(InsuranceProduct.fulfilled, (state: SettingState, action: PayloadAction<SettingInsuranceProductResponse>) => {
                 state.insurance_products = action.payload.data.products
             })
@@ -237,6 +257,16 @@ const settingSlice = createSlice({
                 state.medical_conditions = action.payload.data.medical_conditions
                 state.marital_statuses = action.payload.data.marital_statuses
             })
+            ;
+
+        const handleSubmitFulfilled = (state: SettingState, action: PayloadAction<PlanSearchResponse>) => {
+            state.policy_providers = action.payload.data.providers
+            state.currencies = action.payload.data.currencies
+        }
+
+        builder
+            .addCase(UpdatePlan.fulfilled, handleSubmitFulfilled)
+            .addCase(AddPlan.fulfilled, handleSubmitFulfilled)
     }
 })
 

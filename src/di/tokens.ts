@@ -11,6 +11,10 @@ export const TOKENS = {
     VehicleRepository: "VehicleRepository",
     HealthRepository: "HealthRepository",
     LeadRepository: "LeadRepository",
+    DocumentRepository: "DocumentRepository",
+    AuditRepository: "AuditRepository",
+    PolicyProviderRepository: "PolicyProviderRepository",
+    PlanRepository: "PlanRepository",
 
     /***USECASES***/
 
@@ -41,6 +45,7 @@ export const TOKENS = {
     ManageUpsertCustomerUseCase: 'ManageUpsertCustomerUseCase',
     ManageCustomerDetailUseCase: 'ManageCustomerDetailUseCase',
     ManageLeadActivityUseCase: 'ManageLeadActivityUseCase',
+    ManagePlanUseCase: 'ManagePlanUseCase',
 
     /* Leads */
     LeadActivityUseCase: 'LeadActivityUseCase',
@@ -58,5 +63,10 @@ export const TOKENS = {
     /***SERVICES***/
     VehiclePrerequisiteService: 'VehiclePrerequisiteService',
     HealthPrerequisiteService: 'HealthPrerequisiteService',
+    LeadService: 'LeadService',
+    DocumentService: 'DocumentService',
+    AuditService: 'AuditService',
+    PolicyProviderService: 'PolicyProviderService',
+    PlanService: 'PlanService',
 
 }

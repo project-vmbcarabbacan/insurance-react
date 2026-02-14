@@ -13,6 +13,12 @@ interface manageCustomerResponse {
     products: LabelValue[]
 }
 
+interface managePlanResponse {
+    statuses: LabelValue[]
+    products: LabelValue[]
+    policy_providers: LabelValue[]
+}
+
 interface productResponse {
     products: LabelValue[]
 }
@@ -68,6 +74,11 @@ export type SettingManageTeamResponse = {
 
 export type SettingManageCustomerResponse = {
     data: manageCustomerResponse
+    message: string
+}
+
+export type SettingManagePlansResponse = {
+    data: managePlanResponse
     message: string
 }
 

@@ -12,6 +12,7 @@ import { CustomerRepository } from "../infrastructure/repositories/CustomerRepos
 import { VehicleRepository } from "../infrastructure/repositories/VehicleRepository.ts";
 import { HealthRepository } from "../infrastructure/repositories/HealthRepository.ts";
 import { LeadRepository } from "../infrastructure/repositories/LeadRepository.ts";
+import { PlanRepository } from "../infrastructure/repositories/PlanRepository.ts";
 
 /*---------------------*usecases*---------------------*/
 /* auth */
@@ -39,6 +40,7 @@ import { ManageCustomerUseCase } from "../app/usecases/settings/ManageCustomerUs
 import { ManageUpsertCustomerUseCase } from "../app/usecases/settings/ManageUpsertCustomerUseCase.ts";
 import { ManageCustomerDetailUseCase } from "../app/usecases/settings/ManageCustomerDetailUseCase.ts";
 import { ManageLeadActivityUseCase } from "../app/usecases/settings/ManageLeadActivityUseCase.ts";
+import { ManagePlanUseCase } from "../app/usecases/settings/ManagePlanUseCase.ts";
 /* leads  */
 import { LeadActivityUseCase } from "../app/usecases/leads/LeadActivityUseCase.ts";
 import { LeadsUseCase } from "../app/usecases/leads/LeadsUseCase.ts";
@@ -54,6 +56,7 @@ import { FindHealthLeadProductUseCase } from "../app/usecases/leads/healths/Find
 /*---------------------*services*---------------------*/
 import { VehiclePrerequisiteService } from "../app/services/VehiclePrerequisiteService.ts";
 import { HealthPrerequisiteService } from "../app/services/HealthPrerequisiteService.ts";
+import { PlanService } from "../app/services/PlanService.ts";
 
 export function setup() {
     /**
@@ -71,6 +74,7 @@ export function setup() {
     const vehicleRepository = new VehicleRepository(api)
     const healthRepository = new HealthRepository(api)
     const leadRepository = new LeadRepository(api)
+    const planRepository = new PlanRepository(api)
 
     /*---------------------*usecases*---------------------*/
 
@@ -104,6 +108,7 @@ export function setup() {
     const manageUpsertCustomerUseCase = new ManageUpsertCustomerUseCase(settingRepository)
     const manageCustomerDetailUseCase = new ManageCustomerDetailUseCase(settingRepository)
     const manageLeadActivityUseCase = new ManageLeadActivityUseCase(settingRepository)
+    const managePlanUseCase = new ManagePlanUseCase(settingRepository)
 
     /* lead  */
     const leadActivityUseCase = new LeadActivityUseCase(leadRepository)
@@ -120,6 +125,7 @@ export function setup() {
     /*---------------------*Services*---------------------*/
     const vehiclePrerequisiteService = new VehiclePrerequisiteService(settingRepository)
     const healthPrerequisiteService = new HealthPrerequisiteService(settingRepository)
+    const planService = new PlanService(planRepository)
 
     /**
      * CONTAINERIZATION
@@ -136,6 +142,8 @@ export function setup() {
     container.register(TOKENS.VehicleRepository, vehicleRepository)
     container.register(TOKENS.HealthRepository, healthRepository)
     container.register(TOKENS.LeadRepository, leadRepository)
+
+    container.register(TOKENS.PlanRepository, planRepository)
 
     /*---------------------*usecases*---------------------*/
 
@@ -169,6 +177,7 @@ export function setup() {
     container.register(TOKENS.ManageUpsertCustomerUseCase, manageUpsertCustomerUseCase)
     container.register(TOKENS.ManageCustomerDetailUseCase, manageCustomerDetailUseCase)
     container.register(TOKENS.ManageLeadActivityUseCase, manageLeadActivityUseCase)
+    container.register(TOKENS.ManagePlanUseCase, managePlanUseCase)
 
     /* leads  */
     container.register(TOKENS.LeadActivityUseCase, leadActivityUseCase)
@@ -185,5 +194,6 @@ export function setup() {
     /*---------------------*services*---------------------*/
     container.register(TOKENS.VehiclePrerequisiteService, vehiclePrerequisiteService)
     container.register(TOKENS.HealthPrerequisiteService, healthPrerequisiteService)
+    container.register(TOKENS.PlanService, planService)
 
 }

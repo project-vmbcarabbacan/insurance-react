@@ -35,8 +35,11 @@ export const API_URL = {
         leads: 'lead/leads',
     },
     setting: {
-        manageTeams: 'setting/manage/teams',
-        manageCustomers: 'setting/manage/customers',
+        manage: {
+            teams: 'setting/manage/teams',
+            customers: 'setting/manage/customers',
+            plans: 'setting/manage/plans',
+        },
         insuranceProduct: 'setting/insurance/product',
         upsertCustomer: 'setting/customer/upsert',
         detailCustomer: 'setting/customer/details',
@@ -49,6 +52,23 @@ export const API_URL = {
         },
         health: {
             prerequisites: 'setting/health/prerequisites',
+        },
+        provider: {
+            pagination: 'setting/providers/paginate',
+            search: 'setting/providers/search',
+            store: 'setting/providers/store',
+            update: 'setting/providers/update',
+            status: 'setting/providers/status',
+            active: 'setting/providers/active',
+        },
+        plan: {
+            pagination: 'setting/plans/paginate',
+            updatePlan: 'setting/plans/search/update',
+            addPlan: 'setting/plans/search/add',
+            store: 'setting/plans/store',
+            update: 'setting/plans/update',
+            status: 'setting/plans/status',
+            active: 'setting/plans/active',
         }
     }
 }
